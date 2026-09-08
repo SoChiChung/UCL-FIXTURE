@@ -41,6 +41,16 @@ export default function App() {
 
   return (
     <div className="app">
+      <div className="bg-aura" aria-hidden="true">
+        <div className="bg-aura__orb bg-aura__orb--1" />
+        <div className="bg-aura__orb bg-aura__orb--2" />
+        <div className="bg-aura__orb bg-aura__orb--3" />
+        <div className="bg-aura__ring bg-aura__ring--1" />
+        <div className="bg-aura__ring bg-aura__ring--2" />
+        <div className="bg-aura__ring bg-aura__ring--3" />
+        <div className="bg-aura__stars" />
+      </div>
+
       <Header
         captainRoute={captainRoute}
         hasSelection={hasSelection}
@@ -107,7 +117,7 @@ export default function App() {
         数据来源：UEFA 欧冠联赛阶段赛程 · 开球时间为北京时间（UTC+8，已由欧洲时间 CET/CEST 转换）·
         非官方工具，仅供 Fantasy 参考
         <br />
-        ⚠️ 末轮（Matchday 8）全部比赛同一时间开球（北京时间 04:00），无法规划队长切换
+        B站 微博 小红书 公众号 请关注FPL 紫葱酱
       </footer>
     </div>
   )

@@ -1,41 +1,55 @@
 /* ============================================================
-   紫葱酱 · 欧冠 Fantasy 赛程规划器 — Design System
-   与 Design.md §7~§9 的 token 一一对应
+   紫葱酱 · 欧冠 Fantasy 赛程规划器 — 深空冠军设计系统
+   主题：高端欧冠时装杂志封面感 / 极简现代体育时尚数字插画
+   主色：深夜蓝·皇家蓝·钴蓝·星空蓝
+   辅助：银白·铂金灰·冰蓝·香槟金
    ============================================================ */
 
 :root {
-  /* ---- Color System (§7) ---- */
-  --c-primary: #427ab5;
-  --c-primary-dark: #335f8f;
-  --c-primary-light: #e8f0f8;
-  --c-secondary: #406aaf;
-  --c-accent: #f7dd7d;
-  --c-accent-light: #ffe8be;
+  /* ---- 背景（深夜蓝星空骨架） ---- */
+  --bg-deep: #03050d;
+  --bg: #060b1a;
+  --bg-2: #0a1226;
+  --panel: #0d1730;
 
-  --c-surface: #ffffff;
-  --c-surface-alt: #f6f8fc;
-  --c-background: #f2f5fa;
+  /* ---- 蓝（主色） ---- */
+  --royal: #1e3a8a;
+  --cobalt: #2b52d6;
+  --sky: #16234d;
 
-  --c-border: #e2e7f0;
-  --c-border-strong: #c9d3e3;
+  /* ---- 强调色 ---- */
+  --ice: #7dd3fc;
+  --ice-deep: #38bdf8;
+  --gold: #d4af37;
+  --gold-soft: #e9cb7e;
 
-  --c-text: #1a2433;
-  --c-text-secondary: #5a6678;
-  --c-text-muted: #8a94a6;
-  --c-text-on-primary: #ffffff;
+  /* ---- 文字 ---- */
+  --text: #e8eef8; /* 银白 */
+  --text-2: #a8b3c7; /* 铂金灰 */
+  --text-3: #6c7791; /* 暗铂金 */
 
-  --c-success: #3e9d6e;
-  --c-warning: #e8a13d;
-  --c-danger: #d9534f;
+  /* ---- 表面 / 边框 ---- */
+  --surface: rgba(15, 25, 52, 0.55);
+  --surface-solid: #0e1830;
+  --surface-raised: rgba(21, 34, 66, 0.72);
+  --line: rgba(140, 160, 200, 0.12);
+  --line-2: rgba(165, 216, 255, 0.24);
 
-  --c-home-fill: #427ab5;
-  --c-away-outline: #427ab5;
+  /* ---- 状态 ---- */
+  --success: #4ade80;
+  --warning: #f0b45c;
+  --danger: #f87171;
 
-  /* ---- Typography (§8) ---- */
-  --font-display: 'Nunito', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
-  --font-body: 'Nunito', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  /* ---- 主客场语义 ---- */
+  --home-fill: linear-gradient(135deg, #2b52d6 0%, #1e3a8a 100%);
+  --away-line: var(--ice);
 
-  /* ---- Spacing (§9) 4px grid ---- */
+  /* ---- Typography ---- */
+  --font-display: 'Bebas Neue', 'Oswald', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-heading: 'Oswald', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-body: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+
+  /* ---- Spacing（4px grid） ---- */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
@@ -46,16 +60,17 @@
   --s-10: 40px;
   --s-16: 64px;
 
-  /* ---- Radius (§9) ---- */
+  /* ---- Radius ---- */
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 16px;
   --r-full: 999px;
 
-  /* ---- Shadow (§9) ---- */
-  --sh-sm: 0 1px 2px rgba(26, 36, 51, 0.06);
-  --sh-md: 0 4px 12px rgba(26, 36, 51, 0.08);
-  --sh-lg: 0 8px 24px rgba(26, 36, 51, 0.12);
+  /* ---- Shadow（深色下用光晕代替投影） ---- */
+  --sh-sm: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 2px 8px rgba(0, 0, 0, 0.35);
+  --sh-md: 0 6px 22px rgba(0, 0, 0, 0.45);
+  --sh-lg: 0 14px 44px rgba(0, 0, 0, 0.55);
+  --glow-ice: 0 0 0 1px rgba(125, 211, 252, 0.25), 0 0 24px rgba(56, 189, 248, 0.18);
 }
 
 /* ---- Reset ---- */
@@ -71,11 +86,17 @@ html {
 
 body {
   font-family: var(--font-body);
-  color: var(--c-text);
-  background: linear-gradient(180deg, #eef3fa 0%, var(--c-background) 220px, var(--c-background) 100%);
+  color: var(--text);
+  background:
+    radial-gradient(1100px 700px at 50% -12%, rgba(43, 82, 214, 0.34), transparent 62%),
+    radial-gradient(820px 560px at 88% 16%, rgba(30, 58, 138, 0.42), transparent 64%),
+    radial-gradient(760px 620px at 6% 56%, rgba(125, 211, 252, 0.07), transparent 60%),
+    linear-gradient(180deg, #070d1e 0%, var(--bg-deep) 100%);
+  background-attachment: fixed;
   min-height: 100vh;
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 button {
@@ -90,18 +111,122 @@ input {
   font-family: inherit;
 }
 
+/* 深色滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 160, 200, 0.18);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(165, 216, 255, 0.32);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ============================================================
+   背景氛围层（欧战夜空：光晕 + 星点 + 几何轨道，克制克制）
+   ============================================================ */
+.bg-aura {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-aura__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(64px);
+}
+
+.bg-aura__orb--1 {
+  top: -140px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 760px;
+  height: 520px;
+  background: radial-gradient(closest-side, rgba(43, 82, 214, 0.45), transparent);
+}
+
+.bg-aura__orb--2 {
+  top: 26%;
+  right: -180px;
+  width: 540px;
+  height: 540px;
+  background: radial-gradient(closest-side, rgba(30, 58, 138, 0.55), transparent);
+}
+
+.bg-aura__orb--3 {
+  bottom: -160px;
+  left: -140px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(closest-side, rgba(56, 189, 248, 0.10), transparent);
+}
+
+/* 抽象星球轨道（同心圆环） */
+.bg-aura__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(165, 216, 255, 0.10);
+}
+
+.bg-aura__ring--1 {
+  top: -170px;
+  right: -110px;
+  width: 540px;
+  height: 540px;
+}
+
+.bg-aura__ring--2 {
+  top: -110px;
+  right: -50px;
+  width: 400px;
+  height: 400px;
+  border-color: rgba(165, 216, 255, 0.07);
+}
+
+.bg-aura__ring--3 {
+  top: -64px;
+  right: -4px;
+  width: 280px;
+  height: 280px;
+  border-color: rgba(233, 203, 126, 0.14);
+}
+
+/* 星点（欧战夜空） */
+.bg-aura__stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 22% 32%, rgba(232, 238, 248, 0.55), transparent 45%),
+    radial-gradient(1px 1px at 68% 14%, rgba(165, 216, 255, 0.42), transparent 45%),
+    radial-gradient(1.5px 1.5px at 82% 38%, rgba(232, 238, 248, 0.4), transparent 45%),
+    radial-gradient(1px 1px at 34% 58%, rgba(165, 216, 255, 0.3), transparent 45%),
+    radial-gradient(1px 1px at 55% 74%, rgba(232, 238, 248, 0.3), transparent 45%),
+    radial-gradient(1.5px 1.5px at 12% 78%, rgba(165, 216, 255, 0.28), transparent 45%);
+  background-size: 640px 640px;
+}
+
 /* ============================================================
    Layout
    ============================================================ */
 .app {
+  position: relative;
+  z-index: 1;
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 var(--s-6) var(--s-10);
 }
 
-/* ============================================================
-   Workspace（左：赛程矩阵 · 右：选队面板）
-   ============================================================ */
 .workspace {
   display: flex;
   align-items: flex-start;
@@ -120,43 +245,67 @@ input {
   top: var(--s-4);
 }
 
-/* ---- Header ---- */
+/* ============================================================
+   Header — 杂志刊头（Masthead）
+   ============================================================ */
 .header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--s-4);
-  padding: var(--s-6) 0 var(--s-4);
+  padding: var(--s-6) 0 var(--s-5);
   flex-wrap: wrap;
+  border-bottom: 1px solid var(--line);
+}
+
+/* 刊头上方的「发行线」 */
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold) 18%, var(--ice) 50%, var(--gold) 82%, transparent);
+  opacity: 0.7;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: var(--s-3);
+  gap: var(--s-4);
 }
 
 .brand__logo {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--r-md);
-  background: linear-gradient(135deg, var(--c-primary), var(--c-secondary));
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
-  font-size: 24px;
-  box-shadow: var(--sh-md);
+  border-radius: var(--r-md);
+  background: linear-gradient(160deg, rgba(43, 82, 214, 0.35), rgba(13, 23, 48, 0.6));
+  border: 1px solid var(--line-2);
+  box-shadow: var(--glow-ice);
 }
 
 .brand__title {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  line-height: 1.1;
 }
 
 .brand__sub {
+  margin-top: 3px;
+  font-family: var(--font-display);
   font-size: 12px;
-  color: var(--c-text-muted);
-  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  font-weight: 400;
 }
 
 .header__actions {
@@ -165,54 +314,93 @@ input {
   align-items: center;
 }
 
-/* ---- Toggle button (队长路线) ---- */
+/* ---- Toggle button（队长路线） ---- */
 .toggle {
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
   padding: var(--s-2) var(--s-4);
   border-radius: var(--r-full);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
-  border: 2px solid var(--c-border);
-  background: var(--c-surface);
-  transition: all 0.15s ease;
+  border: 1px solid var(--line-2);
+  background: var(--surface);
+  color: var(--text-2);
+  backdrop-filter: blur(8px);
+  transition: all 0.18s ease;
 }
 
 .toggle:hover {
-  border-color: var(--c-border-strong);
+  border-color: var(--ice);
+  color: var(--text);
 }
 
 .toggle--on {
-  background: var(--c-accent);
-  border-color: var(--c-accent);
-  color: var(--c-primary-dark);
+  background: linear-gradient(135deg, rgba(43, 82, 214, 0.5), rgba(30, 58, 138, 0.5));
+  border-color: var(--ice);
+  color: var(--text);
+  box-shadow: var(--glow-ice);
 }
 
 .toggle__dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background: var(--c-text-muted);
-  transition: background 0.15s ease;
+  background: var(--text-3);
+  transition: all 0.18s ease;
 }
 
 .toggle--on .toggle__dot {
-  background: var(--c-primary-dark);
+  background: var(--gold-soft);
+  box-shadow: 0 0 8px rgba(233, 203, 126, 0.7);
 }
 
 .btn-ghost {
   padding: var(--s-2) var(--s-4);
   border-radius: var(--r-full);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
-  color: var(--c-text-secondary);
-  transition: all 0.15s ease;
+  color: var(--text-2);
+  transition: all 0.18s ease;
 }
 
-.btn-ghost:hover {
-  background: var(--c-primary-light);
-  color: var(--c-primary-dark);
+.btn-ghost:hover:not(:disabled) {
+  color: var(--danger);
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   Empty state（未选球队的留白负空间）
+   ============================================================ */
+.empty {
+  text-align: center;
+  padding: var(--s-16) var(--s-6);
+}
+
+.empty__icon {
+  font-size: 52px;
+  margin-bottom: var(--s-4);
+  opacity: 0.9;
+  filter: drop-shadow(0 0 18px rgba(125, 211, 252, 0.35));
+}
+
+.empty__title {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: var(--s-2);
+}
+
+.empty__sub {
+  font-size: 15px;
+  color: var(--text-2);
+  margin-bottom: var(--s-6);
 }
 
 /* ============================================================
@@ -225,26 +413,27 @@ input {
 
 .search__input {
   width: 100%;
-  padding: var(--s-4) var(--s-5);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--c-text);
-  border: 2px solid var(--c-border);
-  border-radius: var(--r-lg);
-  background: var(--c-surface);
+  padding: var(--s-3) var(--s-4);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
   box-shadow: var(--sh-sm);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.search__input::placeholder {
+  color: var(--text-3);
+  font-weight: 400;
 }
 
 .search__input:focus {
   outline: none;
-  border-color: var(--c-primary);
-  box-shadow: 0 0 0 4px var(--c-primary-light);
-}
-
-.search__input::placeholder {
-  color: var(--c-text-muted);
-  font-weight: 500;
+  border-color: var(--ice);
+  box-shadow: var(--glow-ice);
 }
 
 .search__dropdown {
@@ -252,8 +441,8 @@ input {
   top: calc(100% + var(--s-2));
   left: 0;
   right: 0;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
+  background: var(--surface-solid);
+  border: 1px solid var(--line-2);
   border-radius: var(--r-lg);
   box-shadow: var(--sh-lg);
   z-index: 30;
@@ -276,49 +465,54 @@ input {
 
 .search__item:hover,
 .search__item--active {
-  background: var(--c-primary-light);
+  background: rgba(43, 82, 214, 0.22);
 }
 
 .search__item--added {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: default;
 }
 
 .search__code {
-  font-weight: 800;
-  color: var(--c-primary);
-  min-width: 40px;
-  font-size: 13px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--ice);
+  min-width: 44px;
+  font-size: 14px;
+  letter-spacing: 0.04em;
 }
 
 .search__name {
-  font-weight: 700;
+  font-weight: 500;
   flex: 1;
+  color: var(--text);
 }
 
 .search__hint {
   font-size: 12px;
-  color: var(--c-text-muted);
+  color: var(--text-3);
 }
 
 .search__empty {
   padding: var(--s-4);
   text-align: center;
-  color: var(--c-text-muted);
+  color: var(--text-3);
   font-size: 14px;
 }
 
 /* ============================================================
-   Selected Teams
+   Selected Teams（标签）
    ============================================================ */
 .selected {
   margin-bottom: var(--s-5);
 }
 
 .selected__label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--c-text-secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
   margin-bottom: var(--s-2);
 }
 
@@ -330,7 +524,7 @@ input {
 
 .selected__empty {
   font-size: 14px;
-  color: var(--c-text-muted);
+  color: var(--text-3);
 }
 
 .tag {
@@ -339,23 +533,24 @@ input {
   gap: var(--s-2);
   padding: var(--s-2) var(--s-3);
   border-radius: var(--r-full);
-  background: var(--c-surface-alt);
-  border: 1.5px solid var(--c-border);
-  font-weight: 700;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  font-weight: 600;
   font-size: 14px;
-  transition: all 0.15s ease;
+  color: var(--text);
+  transition: all 0.16s ease;
 }
 
 .tag:hover {
-  background: var(--c-primary-light);
-  border-color: var(--c-border-strong);
+  border-color: var(--ice);
 }
 
 .tag__dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--c-primary);
+  background: var(--ice);
+  box-shadow: 0 0 6px rgba(125, 211, 252, 0.6);
 }
 
 .tag__remove {
@@ -364,14 +559,14 @@ input {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  color: var(--c-text-muted);
+  color: var(--text-3);
   font-size: 14px;
   line-height: 1;
   transition: all 0.1s ease;
 }
 
 .tag__remove:hover {
-  background: var(--c-danger);
+  background: var(--danger);
   color: #fff;
 }
 
@@ -385,7 +580,7 @@ input {
 
 .quick__label {
   font-size: 12px;
-  color: var(--c-text-muted);
+  color: var(--text-3);
   align-self: center;
   margin-right: var(--s-1);
 }
@@ -393,28 +588,29 @@ input {
 .chip {
   padding: var(--s-1) var(--s-3);
   border-radius: var(--r-full);
-  background: var(--c-surface);
-  border: 1.5px solid var(--c-border);
-  font-weight: 700;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-weight: 600;
   font-size: 13px;
-  color: var(--c-text-secondary);
-  transition: all 0.12s ease;
+  color: var(--text-2);
+  transition: all 0.14s ease;
 }
 
 .chip:hover {
-  background: var(--c-accent-light);
-  border-color: var(--c-accent);
-  color: var(--c-primary-dark);
+  background: rgba(43, 82, 214, 0.22);
+  border-color: var(--gold);
+  color: var(--gold-soft);
 }
 
 /* ============================================================
-   Team Selector Panel（右侧常驻）
+   Team Selector Panel（右侧常驻，玻璃面板）
    ============================================================ */
 .selector {
-  background: var(--c-surface);
-  border: 1.5px solid var(--c-border);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--r-lg);
   box-shadow: var(--sh-md);
+  backdrop-filter: blur(14px);
   overflow: hidden;
 }
 
@@ -423,21 +619,25 @@ input {
   align-items: center;
   justify-content: space-between;
   padding: var(--s-3) var(--s-4);
-  background: var(--c-primary-light);
-  border-bottom: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(43, 82, 214, 0.16), transparent);
 }
 
 .selector__title {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--c-primary-dark);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
 }
 
 .selector__count {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--c-primary);
-  background: var(--c-surface);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold-soft);
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: var(--r-full);
   padding: 2px 10px;
 }
@@ -445,8 +645,6 @@ input {
 .selector__search {
   margin: var(--s-3);
   width: calc(100% - var(--s-6));
-  padding: var(--s-3) var(--s-4);
-  font-size: 14px;
 }
 
 .selector__list {
@@ -460,12 +658,13 @@ input {
 }
 
 .selector__group-title {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--c-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.12em;
   margin-bottom: var(--s-2);
+  padding-left: var(--s-1);
 }
 
 .selector__item {
@@ -479,105 +678,45 @@ input {
 }
 
 .selector__item:hover {
-  background: var(--c-primary-light);
+  background: rgba(43, 82, 214, 0.16);
 }
 
 .selector__item--checked {
-  background: var(--c-accent-light);
+  background: rgba(43, 82, 214, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.18);
 }
 
 .selector__item input[type='checkbox'] {
   width: 16px;
   height: 16px;
-  accent-color: var(--c-primary);
+  accent-color: var(--ice-deep);
   cursor: pointer;
   flex-shrink: 0;
 }
 
 .selector__item input:disabled {
   cursor: not-allowed;
-  opacity: 0.4;
+  opacity: 0.35;
 }
 
 .selector__code {
-  font-weight: 800;
-  color: var(--c-primary);
-  min-width: 40px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--ice);
+  min-width: 44px;
   font-size: 13px;
+  letter-spacing: 0.05em;
 }
 
 .selector__name {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   flex: 1;
-  color: var(--c-text-secondary);
+  color: var(--text-2);
 }
 
 /* ============================================================
-   Matchday Accordion
-   ============================================================ */
-.accordion {
-  background: var(--c-surface);
-  border: 1.5px solid var(--c-border);
-  border-radius: var(--r-lg);
-  box-shadow: var(--sh-md);
-  margin-bottom: var(--s-3);
-  overflow: hidden;
-  transition: border-color 0.15s ease;
-}
-
-.accordion--open {
-  border-color: var(--c-accent);
-}
-
-.accordion__header {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-  width: 100%;
-  padding: var(--s-4) var(--s-5);
-  text-align: left;
-}
-
-.accordion__chevron {
-  color: var(--c-primary);
-  font-size: 16px;
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
-}
-
-.accordion--open .accordion__chevron {
-  transform: rotate(90deg);
-}
-
-.accordion__title {
-  font-size: 18px;
-  font-weight: 800;
-  flex: 1;
-}
-
-.accordion__range {
-  font-size: 13px;
-  color: var(--c-text-muted);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.accordion__badge {
-  font-size: 12px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: var(--r-full);
-  background: var(--c-accent);
-  color: var(--c-primary-dark);
-}
-
-.accordion__body {
-  padding: 0 var(--s-5) var(--s-5);
-}
-
-/* ============================================================
-   Matchday Range Filter（修改九）
+   Matchday Range Filter
    ============================================================ */
 .range {
   display: flex;
@@ -586,66 +725,75 @@ input {
   gap: var(--s-2);
   margin-bottom: var(--s-4);
   padding: var(--s-2) var(--s-3);
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--r-md);
   font-size: 13px;
+  backdrop-filter: blur(8px);
 }
 
 .range__label {
-  font-weight: 800;
-  color: var(--c-text-secondary);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
   margin-right: var(--s-1);
 }
 
 .range__select {
   font-family: inherit;
   font-size: 13px;
-  font-weight: 700;
-  color: var(--c-primary-dark);
+  font-weight: 600;
+  color: var(--text);
   padding: var(--s-2) var(--s-3);
-  border: 1.5px solid var(--c-border);
+  border: 1px solid var(--line);
   border-radius: var(--r-sm);
-  background: var(--c-surface);
+  background: var(--surface-solid);
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.16s ease;
+}
+
+.range__select option {
+  background: var(--surface-solid);
+  color: var(--text);
 }
 
 .range__select:hover {
-  border-color: var(--c-border-strong);
+  border-color: var(--line-2);
 }
 
 .range__select:focus {
   outline: none;
-  border-color: var(--c-primary);
-  box-shadow: 0 0 0 3px var(--c-primary-light);
+  border-color: var(--ice);
+  box-shadow: var(--glow-ice);
 }
 
 .range__arrow {
-  color: var(--c-text-muted);
+  color: var(--ice);
   font-weight: 700;
 }
 
 .range__hint {
   font-size: 12px;
-  color: var(--c-text-muted);
-  font-weight: 600;
+  color: var(--text-3);
+  font-weight: 500;
   margin-left: var(--s-2);
 }
 
 /* ============================================================
-   Fixture Recommendation（赛程推荐：推荐下一支球队）
+   Fixture Recommendation（赛程推荐）
    ============================================================ */
 .recommend {
   margin-bottom: var(--s-4);
 }
 
 .recommend__card {
-  background: linear-gradient(135deg, var(--c-accent-light), var(--c-surface));
-  border: 1.5px solid var(--c-accent);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.10), var(--surface));
+  border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: var(--r-md);
   padding: var(--s-3) var(--s-4);
   box-shadow: var(--sh-sm);
+  backdrop-filter: blur(8px);
 }
 
 .recommend__hint {
@@ -653,8 +801,8 @@ input {
   align-items: flex-start;
   gap: var(--s-2);
   font-size: 13px;
-  font-weight: 600;
-  color: var(--c-text-secondary);
+  font-weight: 500;
+  color: var(--text-2);
   margin-bottom: var(--s-3);
 }
 
@@ -674,38 +822,40 @@ input {
 
 .recommend__count {
   font-size: 13px;
-  font-weight: 800;
-  color: var(--c-primary-dark);
+  font-weight: 700;
+  color: var(--gold-soft);
 }
 
 .recommend__cta {
   padding: var(--s-2) var(--s-4);
   border-radius: var(--r-full);
-  background: var(--c-primary);
+  background: linear-gradient(135deg, var(--cobalt), var(--royal));
   color: #fff;
   font-size: 14px;
-  font-weight: 800;
-  transition: background 0.15s ease, transform 0.1s ease;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(43, 82, 214, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .recommend__cta:hover {
-  background: var(--c-primary-dark);
   transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(43, 82, 214, 0.5);
 }
 
 .recommend__result {
   margin-top: var(--s-3);
-  background: var(--c-surface);
-  border: 1.5px solid var(--c-border);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--r-md);
   padding: var(--s-4);
   box-shadow: var(--sh-md);
+  backdrop-filter: blur(12px);
 }
 
 .recommend__subtitle {
   font-size: 13px;
   font-weight: 700;
-  color: var(--c-text-secondary);
+  color: var(--text-2);
   margin-bottom: var(--s-2);
 }
 
@@ -714,7 +864,8 @@ input {
   align-items: center;
   gap: var(--s-3);
   padding: var(--s-3);
-  background: var(--c-primary-light);
+  background: rgba(43, 82, 214, 0.18);
+  border: 1px solid rgba(125, 211, 252, 0.16);
   border-radius: var(--r-sm);
 }
 
@@ -725,10 +876,10 @@ input {
   min-width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--c-primary);
+  background: linear-gradient(135deg, var(--cobalt), var(--royal));
   color: #fff;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
@@ -741,15 +892,17 @@ input {
 }
 
 .recommend__code {
+  font-family: var(--font-heading);
   font-size: 18px;
-  font-weight: 800;
-  color: var(--c-primary-dark);
+  font-weight: 700;
+  color: var(--ice);
+  letter-spacing: 0.03em;
 }
 
 .recommend__name {
   font-size: 14px;
-  font-weight: 700;
-  color: var(--c-text-secondary);
+  font-weight: 600;
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -757,8 +910,8 @@ input {
 
 .recommend__holes {
   font-size: 13px;
-  font-weight: 700;
-  color: var(--c-primary);
+  font-weight: 600;
+  color: var(--gold-soft);
   white-space: nowrap;
 }
 
@@ -772,35 +925,35 @@ input {
 .recommend__btn {
   padding: var(--s-2) var(--s-4);
   border-radius: var(--r-full);
-  border: 1.5px solid var(--c-primary);
-  background: var(--c-surface);
-  color: var(--c-primary-dark);
+  border: 1px solid var(--ice);
+  background: transparent;
+  color: var(--ice);
   font-size: 13px;
-  font-weight: 700;
-  transition: all 0.12s ease;
+  font-weight: 600;
+  transition: all 0.14s ease;
 }
 
 .recommend__btn:hover {
-  background: var(--c-primary);
-  color: #fff;
+  background: var(--ice);
+  color: var(--bg-deep);
 }
 
 .recommend__btn--ghost {
-  border-color: var(--c-border);
-  color: var(--c-text-secondary);
+  border-color: var(--line-2);
+  color: var(--text-2);
 }
 
 .recommend__btn--ghost:hover {
-  background: var(--c-primary-light);
-  border-color: var(--c-primary);
-  color: var(--c-primary-dark);
+  background: rgba(43, 82, 214, 0.22);
+  border-color: var(--ice);
+  color: var(--text);
 }
 
 .recommend__schedule {
   list-style: none;
   margin: var(--s-3) 0 0;
   padding: var(--s-2) var(--s-3);
-  background: var(--c-surface-alt);
+  background: rgba(13, 23, 48, 0.5);
   border-radius: var(--r-sm);
   display: flex;
   flex-direction: column;
@@ -811,38 +964,42 @@ input {
   display: flex;
   gap: var(--s-3);
   font-size: 13px;
-  font-weight: 600;
-  color: var(--c-text-secondary);
+  font-weight: 500;
+  color: var(--text-2);
 }
 
 .recommend__line-md {
-  font-weight: 800;
-  color: var(--c-primary);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--ice);
   min-width: 42px;
+  letter-spacing: 0.04em;
 }
 
 .recommend__tied {
   margin-top: var(--s-3);
   font-size: 12px;
-  font-weight: 600;
-  color: var(--c-text-muted);
+  font-weight: 500;
+  color: var(--text-3);
 }
 
 .recommend__empty {
   font-size: 14px;
-  color: var(--c-text-muted);
+  color: var(--text-3);
   padding: var(--s-2) 0;
 }
 
 /* ============================================================
-   Fixture Matrix（统一赛程矩阵：行=球队，列=Matchday→比赛日）
+   Fixture Matrix（赛程矩阵，核心）
    ============================================================ */
 .matrix {
   width: 100%;
   overflow: auto;
-  border: 1px solid var(--c-border);
+  border: 1px solid var(--line);
   border-radius: var(--r-md);
-  background: var(--c-surface);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--sh-md);
 }
 
 .matrix__table {
@@ -852,18 +1009,17 @@ input {
   min-width: 100%;
 }
 
-/* 统一网格线：右 + 下 hairline */
 .matrix__table th,
 .matrix__table td {
   vertical-align: middle;
   padding: var(--s-2) var(--s-3);
   text-align: center;
-  border-right: 1px solid var(--c-border);
+  border-right: 1px solid var(--line);
 }
 
 .matrix__table tbody td,
 .matrix__table tbody th {
-  border-bottom: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--line);
 }
 
 .matrix__table tbody tr:last-child td,
@@ -872,58 +1028,65 @@ input {
 }
 
 .matrix__th {
+  font-family: var(--font-heading);
   font-size: 13px;
-  font-weight: 800;
-  color: var(--c-text-secondary);
+  font-weight: 600;
+  color: var(--text-2);
   white-space: nowrap;
 }
 
 .matrix__th--md {
-  background: var(--c-primary);
-  color: #fff;
-  font-size: 14px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  background: linear-gradient(180deg, rgba(43, 82, 214, 0.4), rgba(30, 58, 138, 0.34));
+  text-transform: uppercase;
 }
 
 .matrix__table .matrix__th--md {
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 1px solid rgba(165, 216, 255, 0.14);
 }
 
 .matrix__th--date {
-  background: var(--c-surface-alt);
-  color: var(--c-text-secondary);
+  background: rgba(13, 23, 48, 0.6);
+  color: var(--text-2);
   font-size: 12px;
   min-width: 72px;
-  border-bottom: 2px solid var(--c-border);
+  border-bottom: 1px solid var(--line-2);
 }
 
 .matrix__th--corner {
   position: sticky;
   left: 0;
   z-index: 3;
-  background: var(--c-surface-alt);
+  background: var(--surface-solid);
   min-width: 60px;
-  border-bottom: 2px solid var(--c-border);
+  border-bottom: 1px solid var(--line-2);
 }
 
 .matrix__th-sub {
   display: block;
   font-size: 10px;
-  font-weight: 600;
-  color: var(--c-text-muted);
+  font-weight: 500;
+  color: var(--text-3);
+  font-family: var(--font-body);
 }
 
 .matrix__td-team {
   position: sticky;
   left: 0;
   z-index: 1;
-  background: var(--c-surface-alt);
+  background: var(--surface-solid);
+  font-family: var(--font-heading);
   font-size: 13px;
-  font-weight: 800;
-  color: var(--c-primary-dark);
+  font-weight: 700;
+  color: var(--ice);
   min-width: 60px;
+  letter-spacing: 0.05em;
 }
 
-/* ---- Fixture Cell（对手 (H/A) + 次要时间，两行） ---- */
+/* ---- Fixture Cell（对手 (H/A) + 开球时间） ---- */
 .cell {
   display: inline-flex;
   flex-direction: column;
@@ -942,49 +1105,58 @@ input {
 
 .cell:hover {
   transform: translateY(-1px);
-  box-shadow: var(--sh-md);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--line-2);
   z-index: 2;
 }
 
 .cell--home {
-  background: var(--c-primary);
-  color: #fff;
+  background: var(--home-fill);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(165, 216, 255, 0.22);
 }
 
 .cell--away {
-  background: var(--c-surface);
-  color: var(--c-primary-dark);
-  border: 1.5px solid var(--c-primary);
+  background: rgba(13, 23, 48, 0.5);
+  color: var(--ice);
+  border: 1px solid rgba(125, 211, 252, 0.4);
 }
 
 .cell--empty {
   background: transparent;
-  border: 1.5px dashed var(--c-border);
+  border: 1px dashed rgba(140, 160, 200, 0.16);
 }
 
 .cell__main {
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.1;
   white-space: nowrap;
+  font-family: var(--font-heading);
+  letter-spacing: 0.04em;
 }
 
 .cell__ha {
   font-size: 11px;
-  font-weight: 700;
-  opacity: 0.75;
+  font-weight: 600;
+  opacity: 0.7;
   margin-left: 1px;
+  font-family: var(--font-body);
 }
 
 .cell__time {
   font-size: 11px;
   font-weight: 600;
   line-height: 1;
-  color: var(--c-text-muted);
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
 }
 
 .cell--home .cell__time {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(232, 238, 248, 0.8);
+}
+
+.cell--away .cell__time {
+  color: var(--text-2);
 }
 
 .cell__badge {
@@ -998,14 +1170,14 @@ input {
   height: 18px;
   padding: 0 3px;
   border-radius: var(--r-full);
-  background: var(--c-success);
-  color: #fff;
+  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  color: #1a1406;
   font-size: 11px;
   font-weight: 800;
-  box-shadow: 0 0 0 2px #fff;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 10px rgba(212, 175, 55, 0.5);
 }
 
-/* 扩展槽（修改十一）：FDR / 评分徽标，默认无数据不渲染 */
+/* 扩展槽（FDR / 评分徽标） */
 .cell__ext {
   display: flex;
   flex-wrap: wrap;
@@ -1015,27 +1187,27 @@ input {
 
 .cell__chip {
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1;
   padding: 2px 5px;
   border-radius: var(--r-full);
-  background: #fff;
-  border: 1px solid var(--c-border);
+  background: rgba(13, 23, 48, 0.7);
+  border: 1px solid var(--line);
   white-space: nowrap;
 }
 
 .cell__chip--warm {
-  color: #b07a1f;
-  border-color: var(--c-accent);
+  color: var(--gold-soft);
+  border-color: rgba(212, 175, 55, 0.4);
 }
 
 .cell__chip--primary {
-  color: var(--c-primary);
-  border-color: var(--c-primary);
+  color: var(--ice);
+  border-color: rgba(125, 211, 252, 0.4);
 }
 
 .cell__chip--muted {
-  color: var(--c-text-muted);
+  color: var(--text-3);
 }
 
 /* 冲突高亮（同日同时刻多队） */
@@ -1047,8 +1219,8 @@ input {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--c-warning);
-  box-shadow: 0 0 0 2px #fff;
+  background: var(--warning);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 8px rgba(240, 180, 92, 0.6);
 }
 
 /* ============================================================
@@ -1057,13 +1229,15 @@ input {
 .tooltip {
   position: fixed;
   z-index: 100;
-  background: #1a2433;
-  color: #fff;
+  background: rgba(9, 16, 34, 0.96);
+  color: var(--text);
   padding: var(--s-3) var(--s-4);
   border-radius: var(--r-md);
   font-size: 13px;
   line-height: 1.5;
+  border: 1px solid var(--line-2);
   box-shadow: var(--sh-lg);
+  backdrop-filter: blur(10px);
   pointer-events: none;
   max-width: 240px;
 }
@@ -1075,22 +1249,24 @@ input {
 }
 
 .tooltip__label {
-  color: var(--c-text-muted);
+  color: var(--text-3);
 }
 
 .tooltip__title {
-  font-weight: 800;
+  font-family: var(--font-heading);
+  font-weight: 700;
   font-size: 14px;
   margin-bottom: var(--s-2);
+  color: var(--text);
 }
 
 .tooltip__home {
-  color: var(--c-accent);
+  color: var(--gold-soft);
   font-weight: 700;
 }
 
 .tooltip__away {
-  color: #9fd0ff;
+  color: var(--ice);
   font-weight: 700;
 }
 
@@ -1103,14 +1279,14 @@ input {
   gap: var(--s-4);
   margin-top: var(--s-4);
   font-size: 13px;
-  color: var(--c-text-secondary);
+  color: var(--text-2);
 }
 
 .legend__item {
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .legend__swatch {
@@ -1121,23 +1297,24 @@ input {
 }
 
 .legend__swatch--home {
-  background: var(--c-primary);
+  background: var(--home-fill);
 }
 
 .legend__swatch--away {
-  background: var(--c-surface);
-  border: 1.5px solid var(--c-primary);
+  background: rgba(13, 23, 48, 0.5);
+  border: 1px solid rgba(125, 211, 252, 0.4);
 }
 
 .legend__swatch--conflict {
-  background: var(--c-warning);
+  background: var(--warning);
   border-radius: 50%;
   width: 10px;
   height: 10px;
 }
 
 .legend__swatch--route {
-  border: 2px solid var(--c-success);
+  border: 2px solid var(--gold);
+  background: transparent;
 }
 
 /* ============================================================
@@ -1152,10 +1329,11 @@ input {
   max-height: 70vh;
   display: flex;
   flex-direction: column;
-  background: var(--c-surface);
-  border: 1.5px solid var(--c-border);
+  background: rgba(10, 18, 38, 0.92);
+  border: 1px solid var(--line-2);
   border-radius: var(--r-lg);
   box-shadow: var(--sh-lg);
+  backdrop-filter: blur(18px);
   z-index: 50;
   overflow: hidden;
 }
@@ -1165,21 +1343,23 @@ input {
   align-items: center;
   justify-content: space-between;
   padding: var(--s-3) var(--s-4);
-  border-bottom: 1px solid var(--c-border);
-  background: var(--c-accent-light);
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.12), transparent);
 }
 
 .overlay__title {
+  font-family: var(--font-heading);
   font-size: 15px;
-  font-weight: 800;
-  color: var(--c-primary-dark);
+  font-weight: 700;
+  color: var(--gold-soft);
+  letter-spacing: 0.03em;
 }
 
 .overlay__subtitle {
   display: block;
   font-size: 11px;
-  font-weight: 600;
-  color: var(--c-text-muted);
+  font-weight: 500;
+  color: var(--text-3);
   margin-top: 1px;
 }
 
@@ -1189,12 +1369,12 @@ input {
   border-radius: 50%;
   font-size: 18px;
   line-height: 1;
-  color: var(--c-text-muted);
-  transition: all 0.1s ease;
+  color: var(--text-3);
+  transition: all 0.12s ease;
 }
 
 .overlay__close:hover {
-  background: var(--c-danger);
+  background: var(--danger);
   color: #fff;
 }
 
@@ -1206,7 +1386,7 @@ input {
 
 .overlay__md {
   padding: var(--s-2) 0 var(--s-3);
-  border-bottom: 1px dashed var(--c-border);
+  border-bottom: 1px dashed var(--line-2);
 }
 
 .overlay__md:last-child {
@@ -1214,9 +1394,12 @@ input {
 }
 
 .overlay__md-title {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--c-text-secondary);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ice);
   margin-bottom: var(--s-2);
 }
 
@@ -1229,15 +1412,15 @@ input {
   align-items: baseline;
   gap: var(--s-2);
   font-size: 12px;
-  font-weight: 800;
-  color: var(--c-primary);
+  font-weight: 700;
+  color: var(--text-2);
   margin: var(--s-2) 0 var(--s-1);
 }
 
 .overlay__route-date {
   font-size: 11px;
-  font-weight: 600;
-  color: var(--c-text-muted);
+  font-weight: 500;
+  color: var(--text-3);
 }
 
 .overlay__route .overlay__slot {
@@ -1254,32 +1437,34 @@ input {
 
 .overlay__no {
   font-size: 12px;
-  font-weight: 800;
-  color: var(--c-success);
+  font-weight: 700;
+  color: var(--gold-soft);
   min-width: 16px;
 }
 
 .overlay__meta {
-  color: var(--c-text-muted);
-  font-weight: 600;
+  color: var(--text-3);
+  font-weight: 500;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .overlay__teams {
-  font-weight: 700;
-  color: var(--c-text);
+  font-weight: 600;
+  color: var(--text);
 }
 
 .overlay__warn {
-  color: var(--c-warning);
+  color: var(--warning);
 }
 
 .overlay__chain {
   margin-top: var(--s-2);
   font-size: 12px;
-  font-weight: 700;
-  color: var(--c-primary-dark);
-  background: var(--c-primary-light);
+  font-weight: 600;
+  color: var(--ice);
+  background: rgba(43, 82, 214, 0.16);
+  border: 1px solid rgba(125, 211, 252, 0.14);
   border-radius: var(--r-sm);
   padding: var(--s-2) var(--s-3);
   line-height: 1.5;
@@ -1288,86 +1473,16 @@ input {
 .overlay__empty {
   padding: var(--s-8) var(--s-4);
   text-align: center;
-  color: var(--c-text-muted);
+  color: var(--text-3);
   font-size: 14px;
 }
 
 .overlay__foot {
   padding: var(--s-2) var(--s-4);
-  border-top: 1px solid var(--c-border);
+  border-top: 1px solid var(--line);
   font-size: 11px;
-  color: var(--c-text-muted);
+  color: var(--text-3);
   text-align: center;
-}
-
-/* ============================================================
-   Mobile Timeline（按自然日期分组）
-   ============================================================ */
-.timeline {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-3);
-}
-
-.timeline__day {
-  background: var(--c-surface-alt);
-  border-radius: var(--r-md);
-  padding: var(--s-3);
-}
-
-.timeline__day-head {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--c-text-secondary);
-  margin-bottom: var(--s-2);
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-}
-
-.timeline__tz {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--c-text-muted);
-}
-
-.timeline__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-2);
-}
-
-.timeline__row {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  padding: var(--s-2) var(--s-3);
-  background: var(--c-surface);
-  border-radius: var(--r-sm);
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.timeline__team {
-  color: var(--c-text-secondary);
-  min-width: 40px;
-  font-weight: 800;
-  font-size: 13px;
-}
-
-.timeline__no {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 3px;
-  border-radius: 50%;
-  background: var(--c-success);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 800;
-  flex-shrink: 0;
 }
 
 /* ============================================================
@@ -1376,36 +1491,11 @@ input {
 .footer {
   margin-top: var(--s-10);
   padding: var(--s-5) 0;
-  border-top: 1px solid var(--c-border);
+  border-top: 1px solid var(--line);
   font-size: 12px;
-  color: var(--c-text-muted);
+  color: var(--text-3);
   text-align: center;
   line-height: 1.7;
-}
-
-/* ============================================================
-   Empty state
-   ============================================================ */
-.empty {
-  text-align: center;
-  padding: var(--s-16) var(--s-6);
-}
-
-.empty__icon {
-  font-size: 56px;
-  margin-bottom: var(--s-4);
-}
-
-.empty__title {
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: var(--s-2);
-}
-
-.empty__sub {
-  font-size: 15px;
-  color: var(--c-text-secondary);
-  margin-bottom: var(--s-6);
 }
 
 /* ============================================================
@@ -1417,7 +1507,7 @@ input {
   }
 
   .brand__title {
-    font-size: 19px;
+    font-size: 20px;
   }
 }
 
@@ -1452,7 +1542,7 @@ input {
   }
 
   .brand__sub {
-    display: none;
+    letter-spacing: 0.22em;
   }
 
   .empty__title {
