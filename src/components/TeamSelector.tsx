@@ -1,6 +1,12 @@
 import { useMemo, useState } from 'react'
 import type { Team } from '../types'
 
+/** 从 "Pot 4" 提取数字 4（用于 Pot 升序排序，不依赖字符串/JSON 原始顺序） */
+function potNum(pot: string): number {
+  const m = pot.match(/(\d+)/)
+  return m ? parseInt(m[1], 10) : 0
+}
+
 interface TeamSelectorProps {
   teams: Team[]
   selectedCodes: string[]
@@ -25,7 +31,7 @@ export default function TeamSelector({
     )
   }, [query, teams])
 
-  // 按抽签档次分组
+  // 按抽签档次分组，并强制 Pot 数字升序 + 同 Pot 内 code 升序
   const groups = useMemo(() => {
     const map = new Map<string, Team[]>()
     for (const t of filtered) {
@@ -34,6 +40,11 @@ export default function TeamSelector({
       map.set(t.pot, arr)
     }
     return Array.from(map.entries())
+      .sort((a, b) => potNum(a[0]) - potNum(b[0]))
+      .map(
+        ([pot, list]) =>
+          [pot, [...list].sort((x, y) => x.code.localeCompare(y.code))] as [string, Team[]],
+      )
   }, [filtered])
 
   const full = selectedCodes.length >= maxTeams
