@@ -1,0 +1,19 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+
+# TS 增量编译缓存
+*.tsbuildinfo
+
+# 视觉验证截图（临时产物）
+shot-*.png
+
+# WorkBuddy 本地项目数据（memory / skills 缓存等）
+.workbuddy/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+*.log
