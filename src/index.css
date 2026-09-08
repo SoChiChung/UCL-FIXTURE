@@ -1512,16 +1512,6 @@ input {
 }
 
 @media (max-width: 959px) {
-  .workspace {
-    flex-direction: column;
-  }
-
-  .workspace__side {
-    width: 100%;
-    position: static;
-    order: -1;
-  }
-
   .selector__list {
     max-height: 320px;
   }
@@ -1555,5 +1545,188 @@ input {
     bottom: var(--s-4);
     width: auto;
     max-height: 60vh;
+  }
+}
+
+/* ============================================================
+   Mobile Tab（移动端竖屏分步导航）
+   仅 orientation: portrait 时生效；桌面/横屏保持左右并排
+   ============================================================ */
+
+/* 底部 Tab 栏：默认隐藏，竖屏显示 */
+.mobile-tabbar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: rgba(10, 18, 38, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid var(--line-2);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mobile-tabbar__tab {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 0 12px;
+  color: var(--text-3);
+  transition: color 0.15s ease;
+}
+
+.mobile-tabbar__tab--active {
+  color: var(--gold-soft);
+}
+
+.mobile-tabbar__tab--active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--ice-deep), var(--gold));
+}
+
+.mobile-tabbar__icon {
+  font-size: 20px;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(125, 211, 252, 0.25));
+}
+
+.mobile-tabbar__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.mobile-tabbar__badge {
+  position: absolute;
+  top: 6px;
+  left: calc(50% + 8px);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  color: var(--gold-soft);
+  background: rgba(212, 175, 55, 0.14);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: var(--r-full);
+  padding: 0 6px;
+}
+
+/* 「查看赛程 →」按钮：默认隐藏，竖屏显示 */
+.mobile-view-fixtures {
+  display: none;
+  width: calc(100% - var(--s-8));
+  margin: var(--s-4) var(--s-4) 0;
+  padding: var(--s-3);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--bg-deep);
+  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  border-radius: var(--r-md);
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.25);
+  transition: filter 0.15s ease;
+}
+
+.mobile-view-fixtures:hover {
+  filter: brightness(1.06);
+}
+
+/* 横屏引导条：默认隐藏，竖屏显示 */
+.landscape-hint {
+  display: none;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-4);
+  margin-bottom: var(--s-4);
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: var(--r-md);
+  color: var(--gold-soft);
+  font-size: 13px;
+}
+
+.landscape-hint__icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.landscape-hint__text {
+  flex: 1;
+}
+
+.landscape-hint__close {
+  font-size: 20px;
+  line-height: 1;
+  color: var(--gold-soft);
+  opacity: 0.7;
+  padding: 0 var(--s-1);
+  transition: opacity 0.15s ease;
+}
+
+.landscape-hint__close:hover {
+  opacity: 1;
+}
+
+/* 空态双文案：移动端默认隐藏，竖屏切换显示 */
+.empty--mobile {
+  display: none;
+}
+
+/* ============================================================
+   竖屏（portrait）：启用分步 Tab 模式
+   ============================================================ */
+@media (orientation: portrait) {
+  .app {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+
+  /* 底部 Tab 栏显示 */
+  .mobile-tabbar {
+    display: flex;
+  }
+
+  /* 竖屏下 workspace 只显示当前 tab 对应的一栏 */
+  .workspace[data-tab='select'] .workspace__main {
+    display: none;
+  }
+  .workspace[data-tab='fixtures'] .workspace__side {
+    display: none;
+  }
+
+  /* 选队面板占满全宽 */
+  .workspace__side {
+    width: 100%;
+    position: static;
+  }
+
+  /* 「查看赛程 →」按钮显示 */
+  .mobile-view-fixtures {
+    display: block;
+  }
+
+  /* 横屏引导条显示 */
+  .landscape-hint {
+    display: flex;
+  }
+
+  /* 空态双文案切换 */
+  .empty--desktop {
+    display: none;
+  }
+  .empty--mobile {
+    display: inline;
   }
 }
