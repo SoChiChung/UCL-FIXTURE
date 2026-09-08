@@ -634,6 +634,207 @@ input {
 }
 
 /* ============================================================
+   Fixture Recommendation（赛程推荐：推荐下一支球队）
+   ============================================================ */
+.recommend {
+  margin-bottom: var(--s-4);
+}
+
+.recommend__card {
+  background: linear-gradient(135deg, var(--c-accent-light), var(--c-surface));
+  border: 1.5px solid var(--c-accent);
+  border-radius: var(--r-md);
+  padding: var(--s-3) var(--s-4);
+  box-shadow: var(--sh-sm);
+}
+
+.recommend__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text-secondary);
+  margin-bottom: var(--s-3);
+}
+
+.recommend__bulb {
+  font-size: 16px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.recommend__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+
+.recommend__count {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--c-primary-dark);
+}
+
+.recommend__cta {
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-full);
+  background: var(--c-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.recommend__cta:hover {
+  background: var(--c-primary-dark);
+  transform: translateY(-1px);
+}
+
+.recommend__result {
+  margin-top: var(--s-3);
+  background: var(--c-surface);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: var(--s-4);
+  box-shadow: var(--sh-md);
+}
+
+.recommend__subtitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text-secondary);
+  margin-bottom: var(--s-2);
+}
+
+.recommend__candidate {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  background: var(--c-primary-light);
+  border-radius: var(--r-sm);
+}
+
+.recommend__no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.recommend__team {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.recommend__code {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--c-primary-dark);
+}
+
+.recommend__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recommend__holes {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-primary);
+  white-space: nowrap;
+}
+
+.recommend__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.recommend__btn {
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-full);
+  border: 1.5px solid var(--c-primary);
+  background: var(--c-surface);
+  color: var(--c-primary-dark);
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.12s ease;
+}
+
+.recommend__btn:hover {
+  background: var(--c-primary);
+  color: #fff;
+}
+
+.recommend__btn--ghost {
+  border-color: var(--c-border);
+  color: var(--c-text-secondary);
+}
+
+.recommend__btn--ghost:hover {
+  background: var(--c-primary-light);
+  border-color: var(--c-primary);
+  color: var(--c-primary-dark);
+}
+
+.recommend__schedule {
+  list-style: none;
+  margin: var(--s-3) 0 0;
+  padding: var(--s-2) var(--s-3);
+  background: var(--c-surface-alt);
+  border-radius: var(--r-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.recommend__line {
+  display: flex;
+  gap: var(--s-3);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text-secondary);
+}
+
+.recommend__line-md {
+  font-weight: 800;
+  color: var(--c-primary);
+  min-width: 42px;
+}
+
+.recommend__tied {
+  margin-top: var(--s-3);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text-muted);
+}
+
+.recommend__empty {
+  font-size: 14px;
+  color: var(--c-text-muted);
+  padding: var(--s-2) 0;
+}
+
+/* ============================================================
    Fixture Matrix（统一赛程矩阵：行=球队，列=Matchday→比赛日）
    ============================================================ */
 .matrix {

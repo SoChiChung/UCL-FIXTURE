@@ -7,6 +7,7 @@ import Legend from './components/Legend'
 import MatchdayMatrix from './components/MatchdayMatrix'
 import MatchdayRangeFilter from './components/MatchdayRangeFilter'
 import CaptainRouteOverlay from './components/CaptainRouteOverlay'
+import FixtureRecommendation from './components/FixtureRecommendation'
 
 const MAX_TEAMS = 10
 
@@ -67,6 +68,12 @@ export default function App() {
                   setRangeStart(s)
                   setRangeEnd(e)
                 }}
+              />
+              <FixtureRecommendation
+                selectedCodes={selectedCodes}
+                rangeStart={rangeStart}
+                rangeEnd={rangeEnd}
+                onAddToCompare={toggleTeam}
               />
               <MatchdayMatrix
                 matchdays={visibleMatchdays}
