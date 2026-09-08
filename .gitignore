@@ -13,6 +13,9 @@ shot-*.png
 # WorkBuddy 本地项目数据（memory / skills 缓存等）
 .workbuddy/
 
+# 设计文档（本地保留，不上传仓库）
+md/
+
 # 系统文件
 .DS_Store
 Thumbs.db
