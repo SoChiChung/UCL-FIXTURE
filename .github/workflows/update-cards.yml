@@ -1,0 +1,52 @@
+name: Update Cards Board
+
+# 欧冠黄红牌榜自动更新
+# 规则（主人指定）：每个比赛日「前 2 天」到「后 2 天」期间，每天早上 9:00 更新一次。
+# 覆盖「当天 01:00~22:59（北京时间）」，等效于连续 5 天 × 每天 9 点前后各取样一次。
+# 赛事休赛期（两轮比赛日之间超过 2 天的空档）不触发，避免无意义请求。
+#
+# 时区：cron 用 UTC，这里按北京时间 (UTC+8) 换算 —— 09:00 CST = 01:00 UTC。
+# 但为了直观可靠，直接在 UTC 01:00 触发并在脚本里以「北京时间」判断日期窗口。
+
+on:
+  schedule:
+    # 北京时间每天 09:00（= UTC 01:00）
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  concurrency:
+    group: cards-update
+    cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 抓取 FotMob 公开统计端点，生成 src/data/cards.json
+      # 脚本内置「是否处于更新窗口」判断：不在窗口内会自行跳过并保持退出码 0
+      - name: Fetch cards
+        run: node scripts/fetch-cards.mjs
+
+      # 有变化才提交并推送（保持仓库整洁，不刷无意义 commit）
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- src/data/cards.json; then
+            echo "cards.json 无变化，跳过提交"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/cards.json
+          MSG="chore(cards): 更新黄红牌榜 $(TZ=Asia/Shanghai date +%Y-%m-%d)"
+          git commit -m "$MSG"
+          git push origin HEAD:main

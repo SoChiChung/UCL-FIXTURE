@@ -19,8 +19,12 @@ export default function App() {
   const data = useMemo(() => buildFixtureData(), [])
   const [selectedCodes, setSelectedCodes] = useState<string[]>([])
   const [captainRoute, setCaptainRoute] = useState(false)
-  const [rangeStart, setRangeStart] = useState(1)
-  const [rangeEnd, setRangeEnd] = useState(data.matchdays.length)
+  // 默认展示「当前轮及其后 3 轮」：currentMatchday 由赛程日期实时推算，
+  // 某轮打完后会自动顺延到下一轮（见 normalize.ts 的 SETTLE_DAYS 逻辑）
+  const [rangeStart, setRangeStart] = useState(data.currentMatchday)
+  const [rangeEnd, setRangeEnd] = useState(
+    Math.min(data.currentMatchday + 3, data.matchdays.length),
+  )
   const [activeTab, setActiveTab] = useState<MobileTab>('select')
   const [hintDismissed, setHintDismissed] = useState(false)
   /** 每支队伍选用的球员数（1~3），缺省视为 1 */

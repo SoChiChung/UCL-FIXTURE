@@ -46,6 +46,52 @@ console.log('\n=== 1. 数据完整性 ===')
 check('36 支球队', data.teams.length === 36, `实际 ${data.teams.length}`)
 check('8 个 Matchday', data.matchdays.length === 8, `实际 ${data.matchdays.length}`)
 
+// 当前轮次推算：MD1 已过（9/9~9/11），现在应落在 MD2
+console.log(`  当前轮次推算 → MD${data.currentMatchday}`)
+check('MD1 已结束后当前轮不是 MD1', data.currentMatchday >= 2, `得到 MD${data.currentMatchday}`)
+check(
+  '当前轮落在赛程区间内',
+  data.currentMatchday >= 1 && data.currentMatchday <= data.matchdays.length,
+)
+
+// 复刻 addDays 并验证轮次推算在多个日期的行为
+{
+  const addDays = (k, n) => {
+    const [y, m, d] = k.split('-').map(Number)
+    const t = Date.UTC(y, m - 1, d) + n * 86400000
+    const dt = new Date(t)
+    const p = (x) => String(x).padStart(2, '0')
+    return `${dt.getUTCFullYear()}-${p(dt.getUTCMonth() + 1)}-${p(dt.getUTCDate())}`
+  }
+  const SETTLE = 2
+  const rounds = data.matchdays.map((md) => [md.number, md.dateKeys])
+  const calc = (today) => {
+    let cur = 1
+    for (const [n, ks] of rounds) {
+      const last = ks[ks.length - 1]
+      if (addDays(last, SETTLE) < today) continue
+      cur = n
+      break
+    }
+    const all = rounds.every(([, ks]) => addDays(ks[ks.length - 1], SETTLE) < today)
+    return all ? rounds[rounds.length - 1][0] : cur
+  }
+  const cases = [
+    ['2026-09-09', 1, 'MD1 进行中'],
+    ['2026-09-13', 1, 'MD1 结束+1天，缓冲内'],
+    ['2026-09-14', 2, 'MD1 结束+2天，顺延'],
+    ['2026-10-13', 2, 'MD2 前一天'],
+    ['2026-10-18', 3, 'MD2 结束后'],
+    ['2027-02-01', 8, '赛季已结束'],
+  ]
+  console.log('  轮次推表演算：')
+  for (const [date, want, note] of cases) {
+    const got = calc(date)
+    console.log(`    ${date} → MD${got}（期望 MD${want}）${note}`)
+    check(`轮次推算 ${date}`, got === want, `得到 MD${got}`)
+  }
+}
+
 // 每支球队每轮恰好一场
 const perTeam = new Map()
 for (const md of data.matchdays) {
@@ -220,6 +266,9 @@ check('红牌球员榜存在', Array.isArray(cardsData.redPlayers))
 check('每条含球员名', cardsData.yellowPlayers.every((p) => typeof p.player === 'string' && p.player))
 check('每条含所属球队', cardsData.yellowPlayers.every((p) => typeof p.team === 'string'))
 check('每条含牌数>0', cardsData.yellowPlayers.every((p) => p.count > 0))
+check('含更新时间（精确到分钟）', /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(cardsData.updatedAt), cardsData.updatedAt)
+check('含更新规则说明', typeof cardsData.updatePolicy === 'string' && cardsData.updatePolicy.includes('09:00'))
+check('含覆盖轮次', typeof cardsData.roundsCovered === 'number' && cardsData.roundsCovered >= 1)
 check(
   '黄牌榜按牌数降序',
   cardsData.yellowPlayers.every((p, i, a) => i === 0 || a[i - 1].count >= p.count),
@@ -247,6 +296,8 @@ try {
   check('含所属球队', html.includes(cardsData.yellowPlayers[0].team.slice(0, 4)))
   check('含停赛规则标题', html.includes('黄牌停赛规则'))
   check('含 4 黄新规表述', html.includes('累计 4 黄'))
+  check('含具体更新时间', html.includes(cardsData.updatedAt.slice(0, 16)))
+  check('已移除「手动拉取」类文案', !html.includes('npm run fetch:cards') && !html.includes('手动'))
 } catch (e) {
   check('CardBoard 渲染成功', false, e.message)
 }

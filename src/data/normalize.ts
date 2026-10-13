@@ -87,6 +87,15 @@ function toTeamRef(id: number, code: string, name: string): TeamRef {
   return { id, code, name }
 }
 
+/** "YYYY-MM-DD" 加减天数，返回同格式字符串（纯字符串运算，避开时区问题） */
+function addDays(dateKey: string, days: number): string {
+  const [y, m, d] = dateKey.split('-').map(Number)
+  const t = Date.UTC(y, m - 1, d) + days * 86400000
+  const dt = new Date(t)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`
+}
+
 const typed = JSON.parse(rawText) as RawData
 
 /** 聚合全局球队（按 code 去重，取首个出现的 id/name/pot） */
@@ -164,19 +173,40 @@ export function buildFixtureData(): FixtureData {
 
   const { teams, teamByCode } = buildTeams(rounds)
 
-  // 当前比赛日：该轮最大北京日期 >= 今天 的最小轮次
   const today = new Date()
   const pad = (n: number) => String(n).padStart(2, '0')
   const todayKey = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`
 
-  let currentMatchday = matchdays.length
+  /**
+   * 当前关注轮次 = 「正在进行或即将开始」的那一轮：
+   *   - 若某轮已全部打完，且距离其最后一天已超过 2 天（给赛后缓冲），
+   *     则顺延到下一轮——这样 MD1（9/9~9/11）在 10 月打开时会落在 MD2，
+   *     而不是停在 MD1。
+   *   - 若所有轮次都已结束，停在最后一轮。
+   */
+  const SETTLE_DAYS = 2 // 轮次结束后仍视为「当前轮」的天数
+
+  let currentMatchday = 1
   for (const md of matchdays) {
     const last = md.dateKeys[md.dateKeys.length - 1]
-    if (last && last >= todayKey) {
-      currentMatchday = md.number
-      break
-    }
+    if (!last) continue
+    // 该轮是否已经彻底结束（末场日期 + 缓冲期已过）
+    const settled =
+      addDays(last, SETTLE_DAYS) < todayKey
+    if (settled) continue
+    // 第一个「未结束」的轮次即当前轮
+    currentMatchday = md.number
+    break
   }
+  // 全部轮次都已结束 → 停在最后一轮
+  const lastMd = matchdays[matchdays.length - 1]
+  const allSettled = matchdays.every(
+    (md) => {
+      const l = md.dateKeys[md.dateKeys.length - 1]
+      return l ? addDays(l, SETTLE_DAYS) < todayKey : true
+    },
+  )
+  if (allSettled) currentMatchday = lastMd.number
 
   return { teams, teamByCode, matchdays, currentMatchday }
 }

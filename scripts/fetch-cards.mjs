@@ -21,7 +21,7 @@
  * 用法：node scripts/fetch-cards.mjs [seasonId]
  */
 
-import { writeFileSync } from 'node:fs'
+import { writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
@@ -88,9 +88,75 @@ async function assertSeason(seasonId) {
   }
 }
 
+/** "YYYY-MM-DD" 加减天数（纯字符串运算，避开时区问题） */
+function addDays(dateKey, days) {
+  const [y, m, d] = dateKey.split('-').map(Number)
+  const t = Date.UTC(y, m - 1, d) + days * 86400000
+  const dt = new Date(t)
+  const p = (n) => String(n).padStart(2, '0')
+  return `${dt.getUTCFullYear()}-${p(dt.getUTCMonth() + 1)}-${p(dt.getUTCDate())}`
+}
+
+/** 取北京时间的今天（UTC+8），返回 YYYY-MM-DD */
+function beijingToday() {
+  const bj = new Date(Date.now() + 8 * 3600 * 1000)
+  const p = (n) => String(n).padStart(2, '0')
+  return `${bj.getUTCFullYear()}-${p(bj.getUTCMonth() + 1)}-${p(bj.getUTCDate())}`
+}
+
+/**
+ * 是否处于「更新窗口」：每个比赛日的前 2 天到后 2 天。
+ * 读取本项目 fixtures.json 的真实赛程（欧洲本地日期，需 +1 天换算成北京日期）。
+ * 通过 --force / 环境变量 CARDS_FORCE=1 可跳过该判断（本地手动刷新用）。
+ */
+function inUpdateWindow() {
+  if (process.env.CARDS_FORCE === '1' || process.argv.includes('--force')) return true
+
+  const fixtures = join(HERE, '..', 'src', 'data', 'fixtures.json')
+  if (!existsSync(fixtures)) return true // 拿不到赛程就别拦着，交给上层判断
+
+  let rounds
+  try {
+    rounds = JSON.parse(readFileSync(fixtures, 'utf8')).data.value
+  } catch {
+    return true
+  }
+
+  const today = beijingToday()
+  const days = rounds.flatMap((r) =>
+    r.match.map((m) => {
+      // "MM/DD/YYYY" → 北京日期（欧洲晚场 21:00 ≈ 北京次日 03:00）
+      const [mm, dd, yy] = m.dateTime.split(' ')[0].split('/').map(Number)
+      const t = Date.UTC(yy, mm - 1, dd) + 86400000
+      const dt = new Date(t)
+      const p = (n) => String(n).padStart(2, '0')
+      return `${dt.getUTCFullYear()}-${p(dt.getUTCMonth() + 1)}-${p(dt.getUTCDate())}`
+    }),
+  )
+
+  const PAD = 2 // 比赛日前后各 2 天
+  const nearest = days
+    .map((d) => Math.round((Date.parse(d) - Date.parse(today)) / 86400000))
+    .reduce((best, diff) => (Math.abs(diff) < Math.abs(best) ? diff : best), 999)
+
+  const inWindow = Math.abs(nearest) <= PAD
+  if (!inWindow) {
+    console.log(
+      `⏭不在更新窗口（距最近比赛日 ${nearest} 天，允许 ±${PAD} 天）— 跳过抓取`,
+    )
+    console.log(`   今天（北京时间）：${today}`)
+  }
+  return inWindow
+}
+
 const seasonId = Number(process.argv[2] ?? DEFAULT_SEASON)
 
 try {
+  // 非更新窗口直接跳过（退出码 0，让 CI 的"有变化才提交"逻辑保持安静）
+  if (!inUpdateWindow()) {
+    process.exit(0)
+  }
+
   await assertSeason(seasonId)
   const [yellowPlayers, redPlayers, yellowTeams, redTeams] = await Promise.all([
     fetchStat(seasonId, 'yellow_card'),
@@ -99,12 +165,27 @@ try {
     fetchStat(seasonId, 'total_red_card_team'),
   ])
 
+  // 已进行的轮次：取榜上球员出场数的最大值（FotMob 每场后更新）
+  const maxApps = Math.max(
+    0,
+    ...[...yellowPlayers, ...redPlayers].map((p) => p.appearances),
+  )
+
   const payload = {
     season: '2026/2027',
     seasonId,
-    updatedAt: new Date().toISOString().slice(0, 10),
+    /** 数据快照时间（北京时间，精确到分钟）——UI 直接展示这个值 */
+    updatedAt: (() => {
+      const bj = new Date(Date.now() + 8 * 3600 * 1000)
+      const p = (n) => String(n).padStart(2, '0')
+      return `${bj.getUTCFullYear()}-${p(bj.getUTCMonth() + 1)}-${p(bj.getUTCDate())} ${p(bj.getUTCHours())}:${p(bj.getUTCMinutes())}`
+    })(),
+    /** 更新规则说明（UI 展示） */
+    updatePolicy: '每个比赛日前 2 天至后 2 天，每天 09:00 自动更新（北京时间）',
     source: 'FotMob (data.fotmob.com)',
     topN: TOP_N,
+    /** 数据覆盖到的轮次 */
+    roundsCovered: maxApps,
     /** 球员级：只保留牌数最多的 TOP_N 位 */
     yellowPlayers: yellowPlayers.slice(0, TOP_N),
     redPlayers: redPlayers.slice(0, TOP_N),
@@ -116,6 +197,7 @@ try {
 
   console.log(`✅ 球员黄牌 TOP${payload.yellowPlayers.length} / 红牌 TOP${payload.redPlayers.length}`)
   console.log(`   球队黄牌 ${yellowTeams.length} 队 / 球队红牌 ${redTeams.length} 队`)
+  console.log(`   覆盖轮次：${maxApps}轮  更新时间：${payload.updatedAt}（北京时间）`)
   console.log(`   → ${OUT}`)
   const maxY = payload.yellowPlayers[0]
   if (maxY) {

@@ -24,9 +24,14 @@ interface TeamCardRow {
 
 interface CardData {
   season: string
+  /** 数据快照时间（北京时间 YYYY-MM-DD HH:mm） */
   updatedAt: string
+  /** 更新规则说明 */
+  updatePolicy: string
   source: string
   topN: number
+  /** 数据覆盖到的轮次 */
+  roundsCovered: number
   yellowPlayers: PlayerCardRow[]
   redPlayers: PlayerCardRow[]
   yellowTeams: TeamCardRow[]
@@ -140,15 +145,12 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
   const rows = isYellow ? CARDS.yellowPlayers : CARDS.redPlayers
   const max = rows.length ? Math.max(...rows.map((r) => r.count)) : 0
 
-  // 赛季已进行轮次（以出场数最大值为准），用于说明榜单覆盖范围
-  const maxApps = rows.length ? Math.max(...rows.map((r) => r.appearances)) : 0
-
   return (
     <section className="cards" aria-label="欧冠球员黄红牌榜">
       <div className="cards__head">
         <span className="cards__title">球员黄红牌榜</span>
         <span className="cards__meta">
-          {CARDS.season} · 截至 {CARDS.updatedAt} · 更新于第 {maxApps} 轮后
+          {CARDS.season} 第 {CARDS.roundsCovered} 轮后数据 · 更新于 {CARDS.updatedAt}（北京时间）
         </span>
       </div>
 
@@ -264,9 +266,8 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
             </li>
           </ul>
           <p className="cards__rule-foot">
+            数据来源 {CARDS.source} · {CARDS.updatePolicy}。
             规则依据 UEFA 竞赛规程第 63.01–63.05 条及 2026-08-04 欧足联第 51/2026 号通函。
-            榜单数据来自 {CARDS.source}，赛前会随赛程推进更新，建议每轮后重新运行
-            <code> npm run fetch:cards </code>刷新。
           </p>
         </div>
       </details>
