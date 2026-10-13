@@ -3,253 +3,325 @@
   "seasonId": 47760,
   "updatedAt": "2026-10-13",
   "source": "FotMob (data.fotmob.com)",
-  "yellow": [
+  "topN": 10,
+  "yellowPlayers": [
     {
-      "team": "Shakhtar Donetsk",
-      "teamId": 9728,
-      "count": 6,
-      "other": 0,
-      "color": "#F0602B"
-    },
-    {
-      "team": "Fenerbahçe",
-      "teamId": 8695,
-      "count": 4,
-      "other": 0,
-      "color": "#002D72"
-    },
-    {
-      "team": "Aston Villa",
-      "teamId": 10252,
-      "count": 3,
-      "other": 0,
-      "color": "#7D1142"
-    },
-    {
-      "team": "Club Brugge",
-      "teamId": 8342,
-      "count": 3,
-      "other": 0,
-      "color": "#0572FF"
-    },
-    {
-      "team": "Galatasaray",
-      "teamId": 8637,
-      "count": 3,
-      "other": 0,
-      "color": "#8D072A"
-    },
-    {
-      "team": "Inter",
-      "teamId": 8636,
-      "count": 3,
-      "other": 0,
-      "color": "#010E80"
-    },
-    {
-      "team": "Manchester City",
-      "teamId": 8456,
-      "count": 3,
-      "other": 0,
-      "color": "#69A8D8"
-    },
-    {
-      "team": "PSV Eindhoven",
-      "teamId": 8640,
-      "count": 3,
-      "other": 0,
-      "color": "#E00000"
-    },
-    {
-      "team": "RB Leipzig",
-      "teamId": 178475,
-      "count": 3,
-      "other": 0,
-      "color": "#DD0741"
-    },
-    {
-      "team": "Real Betis",
-      "teamId": 8603,
-      "count": 3,
-      "other": 0,
-      "color": "#009048"
-    },
-    {
-      "team": "Viking",
-      "teamId": 8478,
-      "count": 3,
-      "other": 0,
-      "color": "#132847"
-    },
-    {
-      "team": "Villarreal",
-      "teamId": 10205,
-      "count": 3,
-      "other": 0,
-      "color": "#e19d00"
-    },
-    {
-      "team": "Como",
-      "teamId": 10171,
-      "count": 2,
-      "other": 0,
-      "color": "#005ea9"
-    },
-    {
-      "team": "LASK",
-      "teamId": 9977,
-      "count": 2,
-      "other": 0,
-      "color": "#101010"
-    },
-    {
-      "team": "Napoli",
-      "teamId": 9875,
-      "count": 2,
-      "other": 0,
-      "color": "#12A0D7"
-    },
-    {
-      "team": "Roma",
-      "teamId": 8686,
-      "count": 2,
-      "other": 0,
-      "color": "#96092B"
-    },
-    {
-      "team": "Sporting CP",
-      "teamId": 9768,
-      "count": 2,
-      "other": 0,
-      "color": "#106840"
-    },
-    {
-      "team": "Bodø/Glimt",
-      "teamId": 8402,
-      "count": 1,
-      "other": 1,
-      "color": "#e09d00"
-    },
-    {
-      "team": "Lille",
-      "teamId": 8639,
-      "count": 1,
-      "other": 1,
-      "color": "#E01D13"
-    },
-    {
-      "team": "AEK Athens",
-      "teamId": 8563,
-      "count": 1,
-      "other": 0,
-      "color": "#d99f00"
-    },
-    {
-      "team": "Arsenal",
-      "teamId": 9825,
-      "count": 1,
-      "other": 0,
-      "color": "#bd0510"
-    },
-    {
-      "team": "Atlético Madrid",
-      "teamId": 9906,
-      "count": 1,
-      "other": 0,
-      "color": "#C63527"
-    },
-    {
-      "team": "Barcelona",
-      "teamId": 8634,
-      "count": 1,
-      "other": 0,
-      "color": "#971e48"
-    },
-    {
-      "team": "Borussia Dortmund",
-      "teamId": 9789,
-      "count": 1,
-      "other": 0,
-      "color": "#d8a000"
-    },
-    {
-      "team": "FC Porto",
-      "teamId": 9773,
-      "count": 1,
-      "other": 0,
-      "color": "#005898"
-    },
-    {
-      "team": "Feyenoord",
-      "teamId": 10235,
-      "count": 1,
-      "other": 0,
-      "color": "#D8232A"
-    },
-    {
-      "team": "Lens",
-      "teamId": 8588,
-      "count": 1,
-      "other": 0,
-      "color": "#d89f00"
-    },
-    {
+      "player": "Alexis Mac Allister",
+      "playerId": 831489,
       "team": "Liverpool",
       "teamId": 8650,
+      "color": "#911712",
+      "country": "ARG",
       "count": 1,
       "other": 0,
-      "color": "#911712"
+      "appearances": 1,
+      "minutes": 69
     },
     {
-      "team": "Manchester United",
-      "teamId": 10260,
+      "player": "Andrés Andrade",
+      "playerId": 688449,
+      "team": "LASK",
+      "teamId": 9977,
+      "color": "#101010",
+      "country": "PAN",
       "count": 1,
       "other": 0,
-      "color": "#C70101"
+      "appearances": 1,
+      "minutes": 90
     },
     {
-      "team": "Real Madrid",
-      "teamId": 8633,
+      "player": "Archie Brown",
+      "playerId": 1113704,
+      "team": "Fenerbahçe",
+      "teamId": 8695,
+      "color": "#002D72",
+      "country": "ENG",
       "count": 1,
       "other": 0,
-      "color": "#085098"
+      "appearances": 1,
+      "minutes": 90
     },
     {
-      "team": "Sabah FK",
-      "teamId": 951893,
+      "player": "Armando Obispo",
+      "playerId": 794244,
+      "team": "PSV",
+      "teamId": 8640,
+      "color": "#E00000",
+      "country": "CUW",
       "count": 1,
       "other": 0,
-      "color": "#101010"
+      "appearances": 1,
+      "minutes": 90
     },
     {
+      "player": "Billy Gilmour",
+      "playerId": 942549,
+      "team": "Napoli",
+      "teamId": 9875,
+      "color": "#12A0D7",
+      "country": "SCO",
+      "count": 1,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 90
+    },
+    {
+      "player": "Bryan Cristante",
+      "playerId": 299799,
+      "team": "Roma",
+      "teamId": 8686,
+      "color": "#96092B",
+      "country": "ITA",
+      "count": 1,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 90
+    },
+    {
+      "player": "César Blackman",
+      "playerId": 888966,
       "team": "Slovan Bratislava",
       "teamId": 6019,
+      "color": "#43B1E6",
+      "country": "PAN",
       "count": 1,
       "other": 0,
-      "color": "#43B1E6"
+      "appearances": 1,
+      "minutes": 90
+    },
+    {
+      "player": "Charles Vanhoutte",
+      "playerId": 952057,
+      "team": "Feyenoord",
+      "teamId": 10235,
+      "color": "#D8232A",
+      "country": "BEL",
+      "count": 1,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 72
+    },
+    {
+      "player": "Christopher Nkunku",
+      "playerId": 704523,
+      "team": "RB Leipzig",
+      "teamId": 178475,
+      "color": "#DD0741",
+      "country": "FRA",
+      "count": 1,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 60
+    },
+    {
+      "player": "Dani Olmo",
+      "playerId": 614834,
+      "team": "Barcelona",
+      "teamId": 8634,
+      "color": "#971e48",
+      "country": "ESP",
+      "count": 1,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 83
     }
   ],
-  "red": [
+  "redPlayers": [
     {
-      "team": "Bodø/Glimt",
-      "teamId": 8402,
-      "count": 1,
-      "other": 1,
-      "color": "#e09d00"
-    },
-    {
+      "player": "Ethan Mbappé",
+      "playerId": 1426809,
       "team": "Lille",
       "teamId": 8639,
-      "count": 1,
-      "other": 1,
-      "color": "#E01D13"
-    },
-    {
-      "team": "Slavia Prague",
-      "teamId": 7787,
+      "color": "#E01D13",
+      "country": "FRA",
       "count": 1,
       "other": 0,
-      "color": "#D82333"
+      "appearances": 1,
+      "minutes": 56
+    },
+    {
+      "player": "Mikulás Konečný",
+      "playerId": 1405567,
+      "team": "Slavia Prague",
+      "teamId": 7787,
+      "color": "#D82333",
+      "country": "CZE",
+      "count": 1,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 4
+    },
+    {
+      "player": "Odin Lurås Bjørtuft",
+      "playerId": 917774,
+      "team": "Bodø/Glimt",
+      "teamId": 8402,
+      "color": "#e09d00",
+      "country": "NOR",
+      "count": 1,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 87
+    }
+  ],
+  "yellowTeams": [
+    {
+      "player": "Shakhtar Donetsk",
+      "playerId": 0,
+      "team": null,
+      "teamId": 9728,
+      "color": "#F0602B",
+      "country": "UKR",
+      "count": 6,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "Fenerbahçe",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8695,
+      "color": "#002D72",
+      "country": "TUR",
+      "count": 4,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "Aston Villa",
+      "playerId": 0,
+      "team": null,
+      "teamId": 10252,
+      "color": "#7D1142",
+      "country": "ENG",
+      "count": 3,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "Club Brugge",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8342,
+      "color": "#0572FF",
+      "country": "BEL",
+      "count": 3,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "Galatasaray",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8637,
+      "color": "#8D072A",
+      "country": "TUR",
+      "count": 3,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "Inter",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8636,
+      "color": "#010E80",
+      "country": "ITA",
+      "count": 3,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "Manchester City",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8456,
+      "color": "#69A8D8",
+      "country": "ENG",
+      "count": 3,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "PSV Eindhoven",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8640,
+      "color": "#E00000",
+      "country": "NED",
+      "count": 3,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "RB Leipzig",
+      "playerId": 0,
+      "team": null,
+      "teamId": 178475,
+      "color": "#DD0741",
+      "country": "GER",
+      "count": 3,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "Real Betis",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8603,
+      "color": "#009048",
+      "country": "ESP",
+      "count": 3,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
+    }
+  ],
+  "redTeams": [
+    {
+      "player": "Bodø/Glimt",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8402,
+      "color": "#e09d00",
+      "country": "NOR",
+      "count": 1,
+      "other": 1,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "Lille",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8639,
+      "color": "#E01D13",
+      "country": "FRA",
+      "count": 1,
+      "other": 1,
+      "appearances": 1,
+      "minutes": 0
+    },
+    {
+      "player": "Slavia Prague",
+      "playerId": 0,
+      "team": null,
+      "teamId": 7787,
+      "color": "#D82333",
+      "country": "CZE",
+      "count": 1,
+      "other": 0,
+      "appearances": 1,
+      "minutes": 0
     }
   ]
 }

@@ -12,8 +12,11 @@
 
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
+import { readFileSync } from 'node:fs'
 import TeamSelector from '../src/components/TeamSelector'
 import MatchdayMatrix from '../src/components/MatchdayMatrix'
+import CardBoard from '../src/components/CardBoard'
+import cardsData from '../src/data/cards.json'
 import { buildFixtureData } from '../src/data/normalize'
 
 const data = buildFixtureData()
@@ -207,6 +210,71 @@ try {
   check('含球员数按钮 1/2/3', out.includes('>1<') && out.includes('>2<') && out.includes('>3<'))
 } catch (e) {
   check('MatchdayMatrix 渲染成功', false, e.message)
+}
+
+console.log('\n=== 5. 球员黄红牌榜 ===')
+
+check('黄牌球员榜非空', cardsData.yellowPlayers.length > 0, `${cardsData.yellowPlayers.length}`)
+check('黄牌榜最多 10 条', cardsData.yellowPlayers.length <= 10)
+check('红牌球员榜存在', Array.isArray(cardsData.redPlayers))
+check('每条含球员名', cardsData.yellowPlayers.every((p) => typeof p.player === 'string' && p.player))
+check('每条含所属球队', cardsData.yellowPlayers.every((p) => typeof p.team === 'string'))
+check('每条含牌数>0', cardsData.yellowPlayers.every((p) => p.count > 0))
+check(
+  '黄牌榜按牌数降序',
+  cardsData.yellowPlayers.every((p, i, a) => i === 0 || a[i - 1].count >= p.count),
+)
+check(
+  '球队全称能映射到本项目缩写',
+  cardsData.yellowPlayers.filter((p) =>
+    ['Liverpool', 'Napoli', 'Barcelona', 'Real Madrid', 'PSV Eindhoven', 'Fenerbahçe'].includes(p.team),
+  ).length > 0,
+)
+
+// 停赛推算：阈值 4/6/8/10
+const THRESH = [4, 6, 8, 10]
+const nextOf = (n) => THRESH.find((t) => n < t) ?? null
+console.log(
+  `  牌数分布: ${cardsData.yellowPlayers.map((p) => `${p.count}`).join(',')} → 距停赛 ${cardsData.yellowPlayers.map((p) => (nextOf(p.count) == null ? '已满' : nextOf(p.count) - p.count)).join(',')} 张`,
+)
+check('每条都能算出下一档阈值或已达上限', cardsData.yellowPlayers.every((p) => nextOf(p.count) === null || nextOf(p.count) > p.count))
+
+try {
+  const html = renderToStaticMarkup(createElement(CardBoard, { selectedCodes: ['LIV', 'BAR'] }))
+  check('CardBoard 渲染成功', html.length > 500, `len=${html.length}`)
+  check('含标题「球员黄红牌榜」', html.includes('球员黄红牌榜'))
+  check('含 TOP1 球员名', html.includes(cardsData.yellowPlayers[0].player.split(' ')[0]))
+  check('含所属球队', html.includes(cardsData.yellowPlayers[0].team.slice(0, 4)))
+  check('含停赛规则标题', html.includes('黄牌停赛规则'))
+  check('含 4 黄新规表述', html.includes('累计 4 黄'))
+} catch (e) {
+  check('CardBoard 渲染成功', false, e.message)
+}
+
+// 球队名映射覆盖：把映射表也做成运行时断言，避免以后改别名改漏
+{
+  const src = readFileSync(new URL('../src/components/CardBoard.tsx', import.meta.url), 'utf8')
+  // 只取 NAME_TO_CODE 这张表（从声明到闭合）
+  const table = src.slice(src.indexOf('const NAME_TO_CODE'), src.indexOf('interface CardBoardProps'))
+  const map = new Map()
+  for (const m of table.matchAll(/^\s*'?([^':]+?)'?\s*:\s*\[\s*'([A-Z0-9]+)'\s*\]/gm)) {
+    map.set(m[1].trim(), m[2])
+  }
+  const codes = new Set(data.teams.map((t) => t.code))
+  const allRows = [...cardsData.yellowPlayers, ...cardsData.redPlayers]
+  const unmapped = allRows.filter((p) => !p.team || !map.has(p.team))
+  check(
+    '球员所属球队全部可映射到本项目缩写',
+    unmapped.length === 0,
+    unmapped.map((p) => `${p.player}(${p.team})`).join(', '),
+  )
+  const badCode = allRows.filter((p) => map.has(p.team) && !codes.has(map.get(p.team)))
+  check(
+    '映射出的缩写都是真实存在的队',
+    badCode.length === 0,
+    badCode.map((p) => `${p.team}->${map.get(p.team)}`).join(', '),
+  )
+  console.log(`  映射表 ${map.size} 个别名，覆盖 ${allRows.length} 条球员记录`)
 }
 
 console.log(`\n=== 结果: ${pass} passed, ${fail} failed ===`)

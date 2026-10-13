@@ -2112,9 +2112,9 @@ input {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.cards__team {
+.cards__player {
   flex-shrink: 0;
-  width: 128px;
+  width: 150px;
   display: flex;
   align-items: baseline;
   gap: var(--s-1);
@@ -2125,10 +2125,46 @@ input {
   white-space: nowrap;
 }
 
+.cards__team {
+  flex-shrink: 0;
+  width: 110px;
+  font-size: 11px;
+  color: var(--text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .cards__code {
   font-size: 9px;
   font-weight: 800;
   color: var(--gold);
+}
+
+/* 距停赛还差几张（黄牌榜）*/
+.cards__gap {
+  flex-shrink: 0;
+  padding: 1px 6px;
+  border-radius: var(--r-full);
+  background: rgba(140, 160, 200, 0.14);
+  color: var(--text-2);
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cards__gap--warn {
+  background: rgba(220, 60, 60, 0.2);
+  color: #f07070;
+}
+
+/* 接近停赛阈值：距下一档 ≤1 张时高亮 */
+.cards__row--warn {
+  background: rgba(220, 60, 60, 0.08);
+}
+
+.cards__row--warn .cards__gap--warn {
+  box-shadow: 0 0 0 1px rgba(220, 60, 60, 0.35);
 }
 
 .cards__sub {
@@ -2260,9 +2296,18 @@ input {
     padding: var(--s-3);
   }
 
-  .cards__team {
-    width: 92px;
+  .cards__player {
+    width: 104px;
     font-size: 11px;
+  }
+
+  .cards__team {
+    width: 68px;
+    font-size: 10px;
+  }
+
+  .cards__gap {
+    display: none;
   }
 
   .cards__head {

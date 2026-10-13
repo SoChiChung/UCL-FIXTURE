@@ -1,9 +1,22 @@
 import { useMemo, useState } from 'react'
 import cardsData from '../data/cards.json'
 
-interface CardRow {
-  team: string
-  teamId: number
+interface PlayerCardRow {
+  player: string
+  playerId: number
+  team: string | null
+  teamId: number | null
+  color: string | null
+  country: string | null
+  count: number
+  other: number
+  appearances: number
+  minutes: number
+}
+
+interface TeamCardRow {
+  team: string | null
+  teamId: number | null
   count: number
   other: number
   color: string | null
@@ -13,86 +26,129 @@ interface CardData {
   season: string
   updatedAt: string
   source: string
-  yellow: CardRow[]
-  red: CardRow[]
+  topN: number
+  yellowPlayers: PlayerCardRow[]
+  redPlayers: PlayerCardRow[]
+  yellowTeams: TeamCardRow[]
+  redTeams: TeamCardRow[]
 }
 
 const CARDS = cardsData as CardData
 
 /**
- * 停赛阈值：4 / 6 / 8 / 10 张（26/27 赛季起由 3 / 5 / 7 改为偶数张）
- * 球员级牌数 FotMob 未开放免费端点，故阈值标尺只按规则说明展示，
- * 不对球队总数做「距离停赛还差几张」的推算（球队牌 ≠ 球员牌）。
+ * 26/27 赛季停赛阈值：联赛阶段起累计 4 张黄牌停赛一场，
+ * 之后每再累计 2 张（第 6、8、10 张…）继续停赛。
+ * 依据 UEFA 竞赛规程 63.02+ 2026-08-04 第 51/2026 号通函。
  */
 const SUSPEND_THRESHOLDS = [4, 6, 8, 10]
 
-interface CardBoardProps {
-  /** 与球队缩写做匹配，命中的球队高亮（用户已关注的队） */
-  selectedCodes: string[]
-}
-
-/** FotMob 用全称，此处按常见别名映射到本项目三字缩写，仅用于高亮匹配 */
-const NAME_TO_CODE: Record<string, string> = {
-  Arsenal: 'ARS',
-  'Aston Villa': 'AVL',
-  'Atalanta BC': 'ATA',
-  'Atlético Madrid': 'ATM',
-  'Bayern München': 'BAY',
-  'Borussia Dortmund': 'BVB',
-  'Club Brugge': 'CLB',
-  Como: 'COM',
-  'FC Porto': 'POR',
-  Feyenoord: 'FEY',
-  Fenerbahçe: 'FEN',
-  Galatasaray: 'GAL',
-  Inter: 'INT',
-  Lille: 'LIL',
-  'Liverpool': 'LIV',
-  'Manchester City': 'MCI',
-  'Manchester United': 'MUN',
-  Napoli: 'NAP',
-  'Paris Saint-Germain': 'PSG',
-  'PSV Eindhoven': 'PSV',
-  Roma: 'ROM',
-  'RB Leipzig': 'RBL',
-  'Real Madrid': 'RMA',
-  'Real Betis': 'BET',
-  'Shakhtar Donetsk': 'SHA',
-  'Sporting CP': 'SCP',
-  Stuttgart: 'STU',
-  'Slovan Bratislava': 'SLO',
-  'AEK Athens': 'AEK',
-  Viking: 'VIK',
-  'Sabah FK': 'SAB',
-  LASK: 'LAS',
-  'Bodø/Glimt': 'BOD',
-  Villarreal: 'VIL',
-  Lens: 'LEN',
+/** 下一档停赛阈值：已达 4 → 下一档 6；已达 2 → 4 */
+function nextThreshold(yellow: number): number | null {
+  return SUSPEND_THRESHOLDS.find((t) => yellow < t) ?? null
 }
 
 /**
- * 欧冠黄红牌榜 + 停赛规则说明。
+ * FotMob 用球队全称，本项目 fixtures.json 用另一套官方名 + 三字缩写。
+ * 这里把 FotMob 队名映射到本项目缩写，仅用于「已选球队高亮」；
+ * 一个球队名可对应多个别名（同一队的不同写法），故用数组。
+ */
+const NAME_TO_CODE: Record<string, string[]> = {
+  Arsenal: ['ARS'],
+  'Aston Villa': ['AVL'],
+  'Atlético Madrid': ['ATM'],
+  Atletico: ['ATM'],
+  'Bayern München': ['BAY'],
+  Bayern: ['BAY'],
+  'Borussia Dortmund': ['BVB'],
+  Dortmund: ['BVB'],
+  'Club Brugge': ['BRU'],
+  ClubBrugge: ['BRU'],
+  Como: ['COM'],
+  'FC Porto': ['POR'],
+  Porto: ['POR'],
+  Feyenoord: ['FEY'],
+  Fenerbahçe: ['FEN'],
+  'Galatasaray': ['GAL'],
+  Inter: ['INT'],
+  'Inter Milan': ['INT'],
+  Lille: ['LIL'],
+  Liverpool: ['LIV'],
+  'Manchester City': ['MCI'],
+  'Man City': ['MCI'],
+  'Manchester United': ['MUN'],
+  'Man Utd': ['MUN'],
+  ManUnited: ['MUN'],
+  Napoli: ['NAP'],
+  'Paris Saint-Germain': ['PSG'],
+  'Paris SG': ['PSG'],
+  'PSV Eindhoven': ['PSV'],
+  PSV: ['PSV'],
+  Barcelona: ['BAR'],
+  'FC Barcelona': ['BAR'],
+  Roma: ['ROM'],
+  'RB Leipzig': ['RBL'],
+  Leipzig: ['RBL'],
+  'Real Madrid': ['RMA'],
+  'Real Betis': ['BET'],
+  Betis: ['BET'],
+  'Shakhtar Donetsk': ['SHK'],
+  Shakhtar: ['SHK'],
+  'Slavia Prague': ['SLA'],
+  'Slavia Praha': ['SLA'],
+  'Slovan Bratislava': ['SBR'],
+  'Sporting CP': ['SPO'],
+  Sporting: ['SPO'],
+  Stuttgart: ['STU'],
+  'AEK Athens': ['AEK'],
+  AEK: ['AEK'],
+  Viking: ['VFK'],
+  VikingFK: ['VFK'],
+  'Sabah FK': ['SAB'],
+  Sabah: ['SAB'],
+  LASK: ['LASK'],
+  'Bodø/Glimt': ['BOD'],
+  'Bodo/Glimt': ['BOD'],
+  'Villarreal CF': ['VIL'],
+  Villarreal: ['VIL'],
+  Lens: ['LEN'],
+}
+
+interface CardBoardProps {
+  /** 与球队缩写做匹配，命中的球员所属球队高亮（用户已关注的队） */
+  selectedCodes: string[]
+}
+
+/**
+ * 欧冠球员黄牌榜 / 红牌榜（各取前十）+ 停赛规则说明。
  *
- * 数据说明：球队级牌数抓自 FotMob 公开统计端点（scripts/fetch-cards.mjs），
- * 落盘为静态 JSON；球员级数据 FotMob 未开放免费端点。
+ * 数据说明：球员姓名、所属球队、牌数、出场数与分钟数抓自 FotMob 公开统计端点
+ * （scripts/fetch-cards.mjs），落盘为静态 JSON；前端不直连第三方。
  */
 export default function CardBoard({ selectedCodes }: CardBoardProps) {
   const [tab, setTab] = useState<'yellow' | 'red'>('yellow')
 
   const selected = useMemo(() => new Set(selectedCodes), [selectedCodes])
 
-  const codeOf = (name: string): string | null => NAME_TO_CODE[name] ?? null
+  /** FotMob 队名 → 本项目缩写（多别名取首个命中） */
+  const codeOf = (name: string | null): string | null => {
+    if (!name) return null
+    const hit = NAME_TO_CODE[name]
+    return hit && hit.length ? hit[0] : null
+  }
 
-  const rows = tab === 'yellow' ? CARDS.yellow : CARDS.red
-
+  const isYellow = tab === 'yellow'
+  const rows = isYellow ? CARDS.yellowPlayers : CARDS.redPlayers
   const max = rows.length ? Math.max(...rows.map((r) => r.count)) : 0
 
+  // 赛季已进行轮次（以出场数最大值为准），用于说明榜单覆盖范围
+  const maxApps = rows.length ? Math.max(...rows.map((r) => r.appearances)) : 0
+
   return (
-    <section className="cards" aria-label="欧冠黄红牌榜">
+    <section className="cards" aria-label="欧冠球员黄红牌榜">
       <div className="cards__head">
-        <span className="cards__title">黄红牌榜</span>
+        <span className="cards__title">球员黄红牌榜</span>
         <span className="cards__meta">
-          {CARDS.season} · 更新 {CARDS.updatedAt}
+          {CARDS.season} · 截至 {CARDS.updatedAt} · 更新于第 {maxApps} 轮后
         </span>
       </div>
 
@@ -100,60 +156,67 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
         <button
           type="button"
           role="tab"
-          aria-selected={tab === 'yellow'}
-          className={`cards__tab cards__tab--yellow ${tab === 'yellow' ? 'is-on' : ''}`}
+          aria-selected={isYellow}
+          className={`cards__tab cards__tab--yellow ${isYellow ? 'is-on' : ''}`}
           onClick={() => setTab('yellow')}
         >
           <span className="cards__dot cards__dot--yellow" aria-hidden="true" />
-          黄牌榜
-          <span className="cards__tab-count">{CARDS.yellow.length}</span>
+          黄牌榜 TOP{CARDS.yellowPlayers.length}
         </button>
         <button
           type="button"
           role="tab"
-          aria-selected={tab === 'red'}
-          className={`cards__tab cards__tab--red ${tab === 'red' ? 'is-on' : ''}`}
+          aria-selected={!isYellow}
+          className={`cards__tab cards__tab--red ${!isYellow ? 'is-on' : ''}`}
           onClick={() => setTab('red')}
         >
           <span className="cards__dot cards__dot--red" aria-hidden="true" />
-          红牌榜
-          <span className="cards__tab-count">{CARDS.red.length}</span>
+          红牌榜 TOP{CARDS.redPlayers.length}
         </button>
       </div>
 
       {rows.length === 0 ? (
-        <div className="cards__empty">本赛季暂无{tab === 'yellow' ? '黄牌' : '红牌'}记录</div>
+        <div className="cards__empty">本赛季暂无{isYellow ? '黄牌' : '红牌'}记录</div>
       ) : (
         <ol className="cards__list">
           {rows.map((r, i) => {
             const code = codeOf(r.team)
             const hit = code != null && selected.has(code)
+            const next = isYellow ? nextThreshold(r.count) : null
+            const risky = next != null && next - r.count <= 1
             return (
               <li
-                className={`cards__row ${hit ? 'cards__row--mine' : ''}`}
-                key={`${r.team}-${r.teamId}`}
+                className={`cards__row ${hit ? 'cards__row--mine' : ''} ${risky ? 'cards__row--warn' : ''}`}
+                key={`${r.playerId}-${r.player}`}
               >
                 <span className="cards__rank">{i + 1}</span>
                 <span
                   className="cards__swatch"
-                  style={{ background: r.color ?? 'var(--border)' }}
+                  style={{ background: r.color ?? 'var(--line)' }}
                   aria-hidden="true"
                 />
-                <span className="cards__team" title={r.team}>
-                  {r.team}
+                <span className="cards__player" title={r.player}>
+                  {r.player}
                   {code && <span className="cards__code">{code}</span>}
                 </span>
-                {tab === 'yellow' && r.other > 0 && (
-                  <span className="cards__sub" title="红牌数">
-                    {r.other} 红
-                  </span>
-                )}
+                <span className="cards__team" title={r.team ?? ''}>
+                  {r.team ?? '—'}
+                </span>
                 <span className="cards__bar" aria-hidden="true">
                   <span
                     className={`cards__bar-fill cards__bar-fill--${tab}`}
                     style={{ width: max ? `${(r.count / max) * 100}%` : '0%' }}
                   />
                 </span>
+                {isYellow && next != null && (
+                  <span
+                    className={`cards__gap ${risky ? 'cards__gap--warn' : ''}`}
+                    title={`再吃 ${next - r.count} 张黄牌即累计 ${next} 张，将停赛一场`}
+                  >
+                    差{next - r.count}张停赛
+                  </span>
+                )}
+                {!isYellow && <span className="cards__gap cards__gap--warn">停赛中</span>}
                 <span className="cards__count">{r.count}</span>
               </li>
             )
@@ -201,9 +264,9 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
             </li>
           </ul>
           <p className="cards__rule-foot">
-            规则依据 UEFA 竞赛规程第 63.01–63.05 条及 2026-08-04 欧足联第51/2026号通函。
-            注：本榜为<b>球队</b>累计牌数，球员级牌数暂无可用免费数据源，因此
-            「距停赛还差几张」需以球员个人累计为准。
+            规则依据 UEFA 竞赛规程第 63.01–63.05 条及 2026-08-04 欧足联第 51/2026 号通函。
+            榜单数据来自 {CARDS.source}，赛前会随赛程推进更新，建议每轮后重新运行
+            <code> npm run fetch:cards </code>刷新。
           </p>
         </div>
       </details>
