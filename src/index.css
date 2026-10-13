@@ -44,10 +44,10 @@
   --home-fill: linear-gradient(135deg, #2b52d6 0%, #1e3a8a 100%);
   --away-line: var(--ice);
 
-  /* ---- Typography ---- */
-  --font-display: 'Bebas Neue', 'Oswald', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  --font-heading: 'Oswald', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  --font-body: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+  /* ---- Typography（小工具离线环境不加载外部字体，改用系统字体栈） ---- */
+  --font-display: 'Arial Narrow', 'Avenir Next Condensed', 'DIN Condensed', 'Roboto Condensed', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-heading: 'Arial', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
 
   /* ---- Spacing（4px grid） ---- */
   --s-1: 4px;
@@ -82,6 +82,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
 }
 
 body {
@@ -96,6 +97,7 @@ body {
   min-height: 100vh;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
   text-rendering: optimizeLegibility;
 }
 
@@ -135,7 +137,10 @@ input {
    ============================================================ */
 .bg-aura {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
@@ -205,7 +210,10 @@ input {
 /* 星点（欧战夜空） */
 .bg-aura__stars {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background-image:
     radial-gradient(1px 1px at 22% 32%, rgba(232, 238, 248, 0.55), transparent 45%),
     radial-gradient(1px 1px at 68% 14%, rgba(165, 216, 255, 0.42), transparent 45%),
@@ -1566,7 +1574,8 @@ input {
   -webkit-backdrop-filter: blur(18px);
   border-top: 1px solid var(--line-2);
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: 0;
+  padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
 }
 
 .mobile-tabbar__tab {
@@ -1690,7 +1699,8 @@ input {
    ============================================================ */
 @media (orientation: portrait) {
   .app {
-    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    padding-bottom: calc(72px + 0px);
+    padding-bottom: calc(72px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
   }
 
   /* 底部 Tab 栏显示 */
@@ -1730,3 +1740,43 @@ input {
     display: inline;
   }
 }
+
+/* ============================================================
+   Flex gap 兼容回退（Chrome 61 基线）
+   Android 8.1 出场 Chrome / WebView 61 不支持 flexbox 的 gap，
+   以下用相邻兄弟 margin 形成基线间距；main.tsx 的行为检测在 <html>
+   挂上 .supports-flex-gap 后，本块整体失效、原生 gap 生效。
+   说明：flex-wrap 容器在 Chrome 61 下仅保证同行横向间距，换行后的
+   纵向间距会退化为 0（该内核极老旧，属可接受的视觉降级）。
+   ============================================================ */
+
+/* —— 行向 flex 容器（margin-left） —— */
+html:not(.supports-flex-gap) .workspace > * + * { margin-left: var(--s-6); }
+html:not(.supports-flex-gap) .header > * + * { margin-left: var(--s-4); }
+html:not(.supports-flex-gap) .brand > * + * { margin-left: var(--s-4); }
+html:not(.supports-flex-gap) .header__actions > * + * { margin-left: var(--s-3); }
+html:not(.supports-flex-gap) .toggle > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .search__item > * + * { margin-left: var(--s-3); }
+html:not(.supports-flex-gap) .selected__tags > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .tag > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .quick > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .selector__item > * + * { margin-left: var(--s-3); }
+html:not(.supports-flex-gap) .range > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .recommend__hint > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .recommend__foot > * + * { margin-left: var(--s-3); }
+html:not(.supports-flex-gap) .recommend__candidate > * + * { margin-left: var(--s-3); }
+html:not(.supports-flex-gap) .recommend__team > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .recommend__actions > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .recommend__line > * + * { margin-left: var(--s-3); }
+html:not(.supports-flex-gap) .tooltip__row > * + * { margin-left: var(--s-4); }
+html:not(.supports-flex-gap) .legend > * + * { margin-left: var(--s-4); }
+html:not(.supports-flex-gap) .legend__item > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .overlay__route-title > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .overlay__slot > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .landscape-hint > * + * { margin-left: var(--s-2); }
+html:not(.supports-flex-gap) .cell__ext > * + * { margin-left: 3px; }
+
+/* —— 列向 flex 容器（margin-top） —— */
+html:not(.supports-flex-gap) .recommend__schedule > * + * { margin-top: var(--s-1); }
+html:not(.supports-flex-gap) .cell > * + * { margin-top: 2px; }
+html:not(.supports-flex-gap) .mobile-tabbar__tab > * + * { margin-top: 2px; }
