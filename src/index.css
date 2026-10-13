@@ -1780,3 +1780,588 @@ html:not(.supports-flex-gap) .cell__ext > * + * { margin-left: 3px; }
 html:not(.supports-flex-gap) .recommend__schedule > * + * { margin-top: var(--s-1); }
 html:not(.supports-flex-gap) .cell > * + * { margin-top: 2px; }
 html:not(.supports-flex-gap) .mobile-tabbar__tab > * + * { margin-top: 2px; }
+
+/* ============================================================
+   比赛日筛选（TeamSelector 内折叠面板）
+   ============================================================ */
+.dayfilter {
+  margin-bottom: var(--s-3);
+}
+
+.dayfilter__toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  background: rgba(43, 82, 214, 0.08);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.dayfilter__toggle:hover {
+  border-color: var(--line-2);
+  background: rgba(43, 82, 214, 0.14);
+}
+
+.dayfilter__toggle-label {
+  flex: 1;
+  text-align: left;
+}
+
+.dayfilter__badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-full);
+  background: var(--gold);
+  color: #1a1405;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.dayfilter__caret {
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+.dayfilter__caret.is-open {
+  transform: rotate(180deg);
+}
+
+.dayfilter__panel {
+  margin-top: var(--s-2);
+  padding: var(--s-3);
+  background: rgba(6, 11, 26, 0.6);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.dayfilter__hint {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-2);
+  margin-bottom: var(--s-3);
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.dayfilter__hint b {
+  color: var(--gold-soft);
+}
+
+.dayfilter__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+}
+
+.dayfilter__md {
+  flex-shrink: 0;
+  width: 34px;
+  padding-top: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ice);
+}
+
+.dayfilter__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+
+.dayfilter__chip {
+  padding: 3px 9px;
+  background: rgba(140, 160, 200, 0.08);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.dayfilter__chip:hover {
+  border-color: var(--line-2);
+  color: var(--text);
+}
+
+.dayfilter__chip--on {
+  background: linear-gradient(135deg, #2b52d6 0%, #1e3a8a 100%);
+  border-color: var(--ice-deep);
+  color: #fff;
+}
+
+.dayfilter__clear {
+  width: 100%;
+  margin-top: var(--s-2);
+  padding: 5px;
+  background: transparent;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-md);
+  color: var(--text-2);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.dayfilter__clear:hover {
+  color: var(--gold-soft);
+  border-color: var(--gold);
+}
+
+/* ============================================================
+   球员数选择 + 汇总行（MatchdayMatrix）
+   ============================================================ */
+.matrix__td-code {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.matrix__td-count {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+.matrix__td-count-label {
+  opacity: 0.7;
+}
+
+.matrix__pick {
+  width: 17px;
+  height: 17px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(140, 160, 200, 0.1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  color: var(--text-2);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.matrix__pick:hover {
+  border-color: var(--ice-deep);
+  color: var(--text);
+}
+
+.matrix__pick--on {
+  background: var(--gold);
+  border-color: var(--gold-soft);
+  color: #1a1405;
+}
+
+.matrix__td-count-unit {
+  opacity: 0.7;
+}
+
+.matrix__td-total {
+  position: sticky;
+  left: 0;
+  padding: var(--s-2) var(--s-3);
+  background: rgba(212, 175, 55, 0.12);
+  border-top: 1px solid var(--line-2);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold-soft);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.matrix__td-total-cell {
+  padding: var(--s-2);
+  background: rgba(212, 175, 55, 0.08);
+  border-top: 1px solid var(--line-2);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--gold);
+  text-align: center;
+}
+
+.matrix__td-total-cell.is-zero {
+  color: var(--text-2);
+  opacity: 0.4;
+  font-weight: 500;
+}
+
+.matrix__td-total--grand {
+  border-top: 1px solid var(--line);
+}
+
+.matrix__td-total-cell--grand {
+  background: rgba(212, 175, 55, 0.14);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   黄红牌榜 CardBoard
+   ============================================================ */
+.cards {
+  margin-top: var(--s-4);
+  padding: var(--s-4);
+  background: rgba(13, 23, 48, 0.5);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+}
+
+.cards__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-3);
+}
+
+.cards__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cards__meta {
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.cards__tabs {
+  display: flex;
+  gap: var(--s-2);
+  margin-bottom: var(--s-3);
+}
+
+.cards__tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cards__tab:hover {
+  border-color: var(--line-2);
+}
+
+.cards__tab.is-on.cards__tab--yellow {
+  background: rgba(240, 200, 60, 0.14);
+  border-color: rgba(240, 200, 60, 0.5);
+  color: #f0c83c;
+}
+
+.cards__tab.is-on.cards__tab--red {
+  background: rgba(220, 60, 60, 0.14);
+  border-color: rgba(220, 60, 60, 0.5);
+  color: #f07070;
+}
+
+.cards__dot {
+  width: 10px;
+  height: 13px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.cards__dot--yellow {
+  background: #f0c83c;
+}
+
+.cards__dot--red {
+  background: #dc3c3c;
+}
+
+.cards__tab-count {
+  padding: 1px 6px;
+  border-radius: var(--r-full);
+  background: rgba(140, 160, 200, 0.16);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.cards__empty {
+  padding: var(--s-4);
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.cards__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.cards__row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 5px var(--s-2);
+  border-radius: var(--r-md);
+  font-size: 12px;
+  transition: background 0.15s;
+}
+
+.cards__row:hover {
+  background: rgba(140, 160, 200, 0.06);
+}
+
+.cards__row--mine {
+  background: rgba(43, 82, 214, 0.16);
+  box-shadow: inset 2px 0 0 var(--gold);
+}
+
+.cards__rank {
+  flex-shrink: 0;
+  width: 18px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-2);
+  text-align: right;
+}
+
+.cards__swatch {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cards__player {
+  flex-shrink: 0;
+  width: 150px;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-1);
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cards__team {
+  flex-shrink: 0;
+  width: 110px;
+  font-size: 11px;
+  color: var(--text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cards__code {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+/* 距停赛还差几张（黄牌榜）*/
+.cards__gap {
+  flex-shrink: 0;
+  padding: 1px 6px;
+  border-radius: var(--r-full);
+  background: rgba(140, 160, 200, 0.14);
+  color: var(--text-2);
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cards__gap--warn {
+  background: rgba(220, 60, 60, 0.2);
+  color: #f07070;
+}
+
+/* 接近停赛阈值：距下一档 ≤1 张时高亮 */
+.cards__row--warn {
+  background: rgba(220, 60, 60, 0.08);
+}
+
+.cards__row--warn .cards__gap--warn {
+  box-shadow: 0 0 0 1px rgba(220, 60, 60, 0.35);
+}
+
+.cards__sub {
+  flex-shrink: 0;
+  padding: 1px 5px;
+  border-radius: var(--r-full);
+  background: rgba(220, 60, 60, 0.18);
+  color: #f07070;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.cards__bar {
+  flex: 1;
+  min-width: 30px;
+  height: 5px;
+  border-radius: var(--r-full);
+  background: rgba(140, 160, 200, 0.12);
+  overflow: hidden;
+}
+
+.cards__bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-full);
+}
+
+.cards__bar-fill--yellow {
+  background: linear-gradient(90deg, #f0c83c 0%, #f0a83c 100%);
+}
+
+.cards__bar-fill--red {
+  background: linear-gradient(90deg, #dc3c3c 0%, #f07070 100%);
+}
+
+.cards__count {
+  flex-shrink: 0;
+  width: 22px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  text-align: right;
+}
+
+/* ---- 停赛规则 ---- */
+.cards__rule {
+  margin-top: var(--s-3);
+  border-top: 1px solid var(--line);
+  padding-top: var(--s-3);
+}
+
+.cards__rule-summary {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold-soft);
+  cursor: pointer;
+  list-style: none;
+}
+
+.cards__rule-summary::-webkit-details-marker {
+  display: none;
+}
+
+.cards__rule-summary::before {
+  content: '▸ ';
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.cards__rule[open] .cards__rule-summary::before {
+  content: '▾ ';
+}
+
+.cards__rule-body {
+  margin-top: var(--s-3);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+.cards__rule-lead {
+  margin: 0 0 var(--s-3);
+  padding: var(--s-3);
+  background: rgba(240, 200, 60, 0.08);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--r-md);
+  color: var(--text);
+}
+
+.cards__thresholds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-bottom: var(--s-3);
+}
+
+.cards__threshold {
+  padding: 3px 10px;
+  border-radius: var(--r-full);
+  background: rgba(240, 200, 60, 0.16);
+  border: 1px solid rgba(240, 200, 60, 0.4);
+  color: #f0c83c;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.cards__rules {
+  margin: 0;
+  padding-left: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cards__rules b {
+  color: var(--ice);
+}
+
+.cards__rule-foot {
+  margin: var(--s-3) 0 0;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+@media (max-width: 720px) {
+  .cards {
+    padding: var(--s-3);
+  }
+
+  .cards__player {
+    width: 104px;
+    font-size: 11px;
+  }
+
+  .cards__team {
+    width: 68px;
+    font-size: 10px;
+  }
+
+  .cards__gap {
+    display: none;
+  }
+
+  .cards__head {
+    flex-direction: column;
+    gap: 2px;
+  }
+}

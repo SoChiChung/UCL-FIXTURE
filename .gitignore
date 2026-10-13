@@ -20,3 +20,6 @@ md/
 .DS_Store
 Thumbs.db
 *.log
+
+# verify 脚本的临时打包产物（npm run verify 生成）
+scripts/.verify.mjs

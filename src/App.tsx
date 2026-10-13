@@ -9,8 +9,11 @@ import MatchdayRangeFilter from './components/MatchdayRangeFilter'
 import CaptainRouteOverlay from './components/CaptainRouteOverlay'
 import FixtureRecommendation from './components/FixtureRecommendation'
 import MobileTabBar, { type MobileTab } from './components/MobileTabBar'
+import CardBoard from './components/CardBoard'
 
 const MAX_TEAMS = 10
+/** 单队最多可选球员数 */
+const MAX_PLAYERS = 3
 
 export default function App() {
   const data = useMemo(() => buildFixtureData(), [])
@@ -20,6 +23,8 @@ export default function App() {
   const [rangeEnd, setRangeEnd] = useState(data.matchdays.length)
   const [activeTab, setActiveTab] = useState<MobileTab>('select')
   const [hintDismissed, setHintDismissed] = useState(false)
+  /** 每支队伍选用的球员数（1~3），缺省视为 1 */
+  const [playerCounts, setPlayerCounts] = useState<Record<string, number>>({})
 
   const selectedTeams = useMemo(
     () => selectedCodes.map((c) => data.teamByCode[c]).filter(Boolean) as Team[],
@@ -33,7 +38,15 @@ export default function App() {
 
   const toggleTeam = (code: string) => {
     setSelectedCodes((prev) => {
-      if (prev.includes(code)) return prev.filter((c) => c !== code)
+      if (prev.includes(code)) {
+        setPlayerCounts((pc) => {
+          if (!(code in pc)) return pc
+          const next = { ...pc }
+          delete next[code]
+          return next
+        })
+        return prev.filter((c) => c !== code)
+      }
       if (prev.length >= MAX_TEAMS) return prev
       return [...prev, code]
     })
@@ -41,9 +54,16 @@ export default function App() {
 
   const clearAll = () => {
     setSelectedCodes([])
+    setPlayerCounts({})
     setActiveTab('select')
   }
   const hasSelection = selectedCodes.length > 0
+
+  /** 设置某队球员数，钳制在 1~MAX_PLAYERS；取消选队时清掉计数 */
+  const setPlayerCount = (code: string, count: number) => {
+    const n = Math.min(Math.max(Math.round(count), 1), MAX_PLAYERS)
+    setPlayerCounts((prev) => ({ ...prev, [code]: n }))
+  }
 
   return (
     <div className="app">
@@ -117,8 +137,11 @@ export default function App() {
                 matchdays={visibleMatchdays}
                 selectedTeams={selectedTeams}
                 captainRoute={captainRoute}
+                playerCounts={playerCounts}
+                onPlayerCountChange={setPlayerCount}
               />
               <Legend />
+              <CardBoard selectedCodes={selectedCodes} />
             </>
           )}
         </main>
@@ -126,6 +149,7 @@ export default function App() {
         <aside className="workspace__side">
           <TeamSelector
             teams={data.teams}
+            matchdays={data.matchdays}
             selectedCodes={selectedCodes}
             maxTeams={MAX_TEAMS}
             onToggle={toggleTeam}
