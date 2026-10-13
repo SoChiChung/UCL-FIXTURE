@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "normalize": "node scripts/normalize-fixtures.mjs",
     "fetch:cards": "node scripts/fetch-cards.mjs",
-    "verify": "esbuild scripts/verify-logic.mjs --bundle --platform=node --format=esm --outfile=scripts/.verify.mjs --external:react --external:react-dom && node scripts/patch-verify.mjs && node scripts/.verify.mjs"
+    "verify": "esbuild scripts/verify-logic.mjs --bundle --platform=node --format=esm --outfile=scripts/.verify.mjs --external:react --external:react-dom && node scripts/patch-verify.mjs && node scripts/.verify.mjs",
+    "verify:e2e": "esbuild scripts/e2e-selection.mjs --bundle --platform=node --format=esm --outfile=scripts/.e2e.mjs && node scripts/.e2e.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

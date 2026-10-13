@@ -1,5 +1,13 @@
 import { useMemo, useState } from 'react'
 import { buildFixtureData } from './data/normalize'
+import {
+  MAX_PLAYERS_PER_MATCHDAY,
+  MAX_PLAYERS_PER_TEAM,
+  MAX_TEAMS,
+  canAddTeam,
+  canSetPlayerCount,
+  maxPlayersForTeam,
+} from './data/selection'
 import type { Team } from './types'
 import Header from './components/Header'
 import TeamSelector from './components/TeamSelector'
@@ -11,10 +19,11 @@ import FixtureRecommendation from './components/FixtureRecommendation'
 import MobileTabBar, { type MobileTab } from './components/MobileTabBar'
 import CardBoard from './components/CardBoard'
 
-const MAX_TEAMS = 10
-/** 单队最多可选球员数 */
-const MAX_PLAYERS = 3
-
+/**
+ * 选队上限 = MAX_TEAMS（15 支）。
+ * 另一条独立约束：单个 Matchday 的参赛球员合计 ≤ MAX_PLAYERS_PER_MATCHDAY（15 人），
+ * 见 data/selection.ts。二者叠加才是完整的可选性判定。
+ */
 export default function App() {
   const data = useMemo(() => buildFixtureData(), [])
   const [selectedCodes, setSelectedCodes] = useState<string[]>([])
@@ -40,6 +49,19 @@ export default function App() {
     [data, rangeStart, rangeEnd],
   )
 
+  /**
+   * 某支球队此刻是否可被勾选；不可勾选时返回原因（用于 title 提示）。
+   * 两条约束任一触发即禁用：球队数已满 / 加入后该轮参赛球员会超 15 人。
+   */
+  const teamBlockReason = (code: string): string | null => {
+    if (selectedCodes.includes(code)) return null
+    if (selectedCodes.length >= MAX_TEAMS) return `最多同时选 ${MAX_TEAMS} 支`
+    if (!canAddTeam(data.matchdays, selectedCodes, playerCounts, code)) {
+      return `该轮参赛球员已达 ${MAX_PLAYERS_PER_MATCHDAY} 人上限`
+    }
+    return null
+  }
+
   const toggleTeam = (code: string) => {
     setSelectedCodes((prev) => {
       if (prev.includes(code)) {
@@ -52,6 +74,7 @@ export default function App() {
         return prev.filter((c) => c !== code)
       }
       if (prev.length >= MAX_TEAMS) return prev
+      if (!canAddTeam(data.matchdays, prev, playerCounts, code)) return prev
       return [...prev, code]
     })
   }
@@ -63,11 +86,21 @@ export default function App() {
   }
   const hasSelection = selectedCodes.length > 0
 
-  /** 设置某队球员数，钳制在 1~MAX_PLAYERS；取消选队时清掉计数 */
+  /** 设置某队球员数，钳制在 1~MAX_PLAYERS_PER_TEAM 且不破坏整轮 15 人上限 */
   const setPlayerCount = (code: string, count: number) => {
-    const n = Math.min(Math.max(Math.round(count), 1), MAX_PLAYERS)
+    const n = Math.min(Math.max(Math.round(count), 1), MAX_PLAYERS_PER_TEAM)
+    if (!canSetPlayerCount(data.matchdays, selectedCodes, playerCounts, code, n)) return
     setPlayerCounts((prev) => ({ ...prev, [code]: n }))
   }
+
+  /** 每队当前可选的最大球员数（供矩阵按钮灰显） */
+  const maxPlayersByCode = useMemo(() => {
+    const out: Record<string, number> = {}
+    for (const c of selectedCodes) {
+      out[c] = maxPlayersForTeam(data.matchdays, selectedCodes, playerCounts, c)
+    }
+    return out
+  }, [data.matchdays, selectedCodes, playerCounts])
 
   return (
     <div className="app">
@@ -101,7 +134,9 @@ export default function App() {
                 <span className="empty--desktop">
                   勾选右侧的球队，赛程矩阵横向铺开 8 个 Matchday，3 秒看清谁先踢、谁后踢、谁撞车
                 </span>
-                <span className="empty--mobile">最多 10 支，勾选后切到「赛程」看对阵安排</span>
+                <span className="empty--mobile">
+                  最多 {MAX_TEAMS} 支，勾选后切到「赛程」看对阵安排
+                </span>
               </div>
             </div>
           ) : (
@@ -142,6 +177,7 @@ export default function App() {
                 selectedTeams={selectedTeams}
                 captainRoute={captainRoute}
                 playerCounts={playerCounts}
+                maxPlayersByCode={maxPlayersByCode}
                 onPlayerCountChange={setPlayerCount}
               />
               <Legend />
@@ -156,6 +192,7 @@ export default function App() {
             matchdays={data.matchdays}
             selectedCodes={selectedCodes}
             maxTeams={MAX_TEAMS}
+            blockReason={teamBlockReason}
             onToggle={toggleTeam}
           />
           {hasSelection && (

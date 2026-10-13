@@ -650,6 +650,17 @@ input {
   padding: 2px 10px;
 }
 
+.selector__rule {
+  margin-bottom: var(--s-2);
+  padding: 5px var(--s-3);
+  background: rgba(43, 82, 214, 0.12);
+  border-left: 2px solid var(--ice-deep);
+  border-radius: var(--r-sm);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
 .selector__search {
   margin: var(--s-3);
   width: calc(100% - var(--s-6));
@@ -692,6 +703,16 @@ input {
 .selector__item--checked {
   background: rgba(43, 82, 214, 0.22);
   box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.18);
+}
+
+/* 触及上限（球队数或单轮 15 人）：整行压暗，hover 出 title 原因 */
+.selector__item--blocked {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.selector__item--blocked:hover {
+  background: transparent;
 }
 
 .selector__item input[type='checkbox'] {
@@ -1054,6 +1075,29 @@ input {
 
 .matrix__table .matrix__th--md {
   border-right: 1px solid rgba(165, 216, 255, 0.14);
+}
+
+/* 表头角标：该轮参赛球员合计 / 上限 15（约束判定口径 = 整轮） */
+.matrix__th-cap {
+  display: block;
+  margin-top: 1px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--text-3);
+}
+
+/* 已触顶（=15）：提醒已无可加球员名额 */
+.matrix__th-cap.is-full {
+  color: var(--gold-soft);
+}
+
+/* 超限：理论上被 UI 拦死，此处兜底标红 */
+.matrix__th-cap.is-over,
+.matrix__th--md.is-over {
+  color: var(--danger);
 }
 
 .matrix__th--date {
@@ -1973,7 +2017,26 @@ html:not(.supports-flex-gap) .mobile-tabbar__tab > * + * { margin-top: 2px; }
   color: #1a1405;
 }
 
+/* 触及单轮 15 人上限：该档位不可选 */
+.matrix__pick--blocked,
+.matrix__pick:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.matrix__pick--blocked:hover {
+  border-color: var(--line);
+  color: var(--text-2);
+}
+
 .matrix__td-count-unit {
+  opacity: 0.7;
+}
+
+.matrix__td-total-sub {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
   opacity: 0.7;
 }
 
@@ -2004,6 +2067,12 @@ html:not(.supports-flex-gap) .mobile-tabbar__tab > * + * { margin-top: 2px; }
   color: var(--text-2);
   opacity: 0.4;
   font-weight: 500;
+}
+
+/* 超出单轮 15 人上限 */
+.matrix__td-total-cell.is-over {
+  background: rgba(248, 113, 113, 0.2);
+  color: var(--danger);
 }
 
 .matrix__td-total--grand {

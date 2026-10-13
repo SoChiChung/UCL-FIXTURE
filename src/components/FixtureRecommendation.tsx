@@ -4,6 +4,7 @@ import {
   computeTiedRemaining,
   getTeamFixtures,
 } from '../data/fixtureRecommendation'
+import { MAX_TEAMS } from '../data/selection'
 import { circledNo } from '../constants'
 
 interface FixtureRecommendationProps {
@@ -15,7 +16,7 @@ interface FixtureRecommendationProps {
 
 /**
  * 赛程推荐（推荐下一支球队）
- * - 触发条件：已选 1~9 支（有已选择且未满 10 支上限）
+ * - 触发条件：已选 1 ~ MAX_TEAMS-1 支（有已选择、且未满球队数上限）
  * - 只推荐 1 支（Top 1），「换一个推荐」按排序继续查看下一支
  * - 无坑时显示空态，不强行推荐
  */
@@ -41,8 +42,8 @@ const [viewing, setViewing] = useState(false)
     setViewing(false)
   }, [selectedCodes, rangeStart, rangeEnd])
 
-  // 触发条件：1 <= n <= 9，否则连 DOM 都不挂
-  if (n < 1 || n >= 10) return null
+  // 触发条件：1 <= n <= MAX_TEAMS-1，否则连 DOM 都不挂
+  if (n < 1 || n >= MAX_TEAMS) return null
 
   const hasResult = result.top !== null
   const safeCursor =

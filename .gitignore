@@ -9,6 +9,8 @@ dist/
 
 # 视觉验证截图（临时产物）
 shot-*.png
+.e2e-shot.png
+.e2e-foot.png
 
 # WorkBuddy 本地项目数据（memory / skills 缓存等）
 .workbuddy/
@@ -23,3 +25,6 @@ Thumbs.db
 
 # verify 脚本的临时打包产物（npm run verify 生成）
 scripts/.verify.mjs
+
+# E2E 脚本的临时打包产物（npm run verify:e2e 生成）
+scripts/.e2e.mjs

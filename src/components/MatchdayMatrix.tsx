@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Match, Matchday, Team } from '../types'
 import { WEEKDAY_CN, circledNo } from '../constants'
+import { MAX_PLAYERS_PER_MATCHDAY, MAX_PLAYERS_PER_TEAM, playersInMatchday } from '../data/selection'
 import { computeCaptainRoute } from '../data/route'
 
 interface MatchdayMatrixProps {
@@ -10,11 +11,13 @@ interface MatchdayMatrixProps {
   captainRoute: boolean
   /** 每支队伍选用的球员数（1~3），未设置时按 1 计 */
   playerCounts: Record<string, number>
+  /**
+   * 每支队伍当前可选的最大球员数（受单轮 15 人上限约束）。
+   * 缺省时视为不额外限制。
+   */
+  maxPlayersByCode?: Record<string, number>
   onPlayerCountChange: (code: string, count: number) => void
 }
-
-/** 单队球员数上限（题目要求：1~3）；下调此值即可同步限制 UI 与汇总 */
-const MAX_PLAYERS = 3
 
 interface TipState {
   match: Match
@@ -67,18 +70,20 @@ function FixtureCell({
  * 统一赛程矩阵：行 = 所选球队，列 = Matchday 1~8（每个 Matchday 内按北京自然日期拆子列）。
  * 复用 computeCaptainRoute 派生每轮的「日期+时刻」序号与撞车标记。
  *
- * 球队行内嵌球员数输入（1~3）；表尾汇总行按中文比赛日（比赛日一/二/…）
- * 统计该比赛日所有已选球队合计出战的球员数。
+ * 球队行内嵌球员数输入（1~3，超出单轮上限的档位灰显）；表尾汇总行按
+ * **Matchday（整轮）** 统计该轮出战球员数，上限 MAX_PLAYERS_PER_MATCHDAY。
  */
 export default function MatchdayMatrix({
   matchdays,
   selectedTeams,
   captainRoute,
   playerCounts,
+  maxPlayersByCode,
   onPlayerCountChange,
 }: MatchdayMatrixProps) {
   const [tip, setTip] = useState<TipState | null>(null)
   const codes = new Set(selectedTeams.map((t) => t.code))
+  const selectedCodes = selectedTeams.map((t) => t.code)
 
   // `${code}|${matchday}` -> { match, isHome }（每队每轮唯一一场）
   const matchByCodeMd = new Map<string, { match: Match; isHome: boolean }>()
@@ -110,8 +115,14 @@ export default function MatchdayMatrix({
   }
 
   /**
-   * 汇总：每个「比赛日」列（matchday + ordinal）累计出战球员数。
-   * 同一球队在同一比赛日只可能有一场比赛，故按比赛日累加各队球员数即可。
+   * 两套汇总，口径不同、用途不同：
+   *
+   * 1. `totalsByDay`（**按比赛日子列**）—— 表尾明细行，回答「比赛日一有几人、
+   *    比赛日二有几人」。这是轮内按北京日期拆分后的分布，与用户查看赛程的直觉一致。
+   *
+   * 2. `totalsByMd`（**按整轮 Matchday**）—— 约束判定用。每队每轮恰好 1 场，
+   *    故整轮合计 = Σ 各已选球队球员数，与轮次无关；上限 MAX_PLAYERS_PER_MATCHDAY
+   *    是按这个口径判定的，故表头角标也用这个数，保证「看到的数」= 「判定的数」。
    */
   const totalsByDay = new Map<string, number>()
   for (const md of matchdays) {
@@ -128,8 +139,13 @@ export default function MatchdayMatrix({
     }
   }
 
-  // 全场合计：所有可见比赛日之和
-  const grandTotal = Array.from(totalsByDay.values()).reduce((a, b) => a + b, 0)
+  const totalsByMd = new Map<number, number>()
+  for (const md of matchdays) {
+    totalsByMd.set(md.number, playersInMatchday(md, selectedCodes, playerCounts))
+  }
+
+  // 全场合计：所有可见轮次之和
+  const grandTotal = Array.from(totalsByMd.values()).reduce((a, b) => a + b, 0)
 
   const tipLeft = tip ? Math.min(tip.x + 14, window.innerWidth - 260) : 0
   const tipTop = tip ? Math.min(tip.y + 14, window.innerHeight - 200) : 0
@@ -143,15 +159,27 @@ export default function MatchdayMatrix({
               球队
               <span className="matrix__th-sub">已选 / 球员数</span>
             </th>
-            {matchdays.map((md) => (
-              <th
-                key={md.number}
-                colSpan={md.subDays.length}
-                className="matrix__th matrix__th--md"
-              >
-                Match Day {md.number}
-              </th>
-            ))}
+            {matchdays.map((md) => {
+              const total = totalsByMd.get(md.number) ?? 0
+              const over = total > MAX_PLAYERS_PER_MATCHDAY
+              return (
+                <th
+                  key={md.number}
+                  colSpan={md.subDays.length}
+                  className={`matrix__th matrix__th--md ${over ? 'is-over' : ''}`}
+                  title={`Matchday ${md.number} 参赛球员合计 ${total} / ${MAX_PLAYERS_PER_MATCHDAY} 人`}
+                >
+                  Match Day {md.number}
+                  <span
+                    className={`matrix__th-cap ${over ? 'is-over' : ''} ${
+                      total === MAX_PLAYERS_PER_MATCHDAY ? 'is-full' : ''
+                    }`}
+                  >
+                    {total}/{MAX_PLAYERS_PER_MATCHDAY} 人
+                  </span>
+                </th>
+              )
+            })}
           </tr>
           <tr>
             {matchdays.map((md) =>
@@ -175,17 +203,24 @@ export default function MatchdayMatrix({
                 <span className="matrix__td-code">{team.code}</span>
                 <span className="matrix__td-count">
                   <span className="matrix__td-count-label">选</span>
-                  {Array.from({ length: MAX_PLAYERS }, (_, i) => i + 1).map((n) => {
+                  {Array.from({ length: MAX_PLAYERS_PER_TEAM }, (_, i) => i + 1).map((n) => {
                     const active = (playerCounts[team.code] ?? 1) === n
+                    const max = maxPlayersByCode?.[team.code] ?? MAX_PLAYERS_PER_TEAM
+                    const blocked = n > max
                     return (
                       <button
                         type="button"
                         key={n}
-                        className={`matrix__pick ${active ? 'matrix__pick--on' : ''}`}
+                        className={`matrix__pick ${active ? 'matrix__pick--on' : ''} ${blocked ? 'matrix__pick--blocked' : ''}`}
+                        disabled={blocked}
                         onClick={() => onPlayerCountChange(team.code, n)}
                         aria-pressed={active}
                         aria-label={`${team.name} 选 ${n} 名球员`}
-                        title={`从 ${team.name} 选 ${n} 名球员`}
+                        title={
+                          blocked
+                            ? `已达单轮 ${MAX_PLAYERS_PER_MATCHDAY} 人上限，该队最多可选 ${max} 名`
+                            : `从 ${team.name} 选 ${n} 名球员`
+                        }
                       >
                         {n}
                       </button>
@@ -227,15 +262,18 @@ export default function MatchdayMatrix({
           <tr>
             <th className="matrix__td-total" scope="row">
               参赛球员合计
+              <span className="matrix__td-total-sub">按比赛日</span>
             </th>
             {matchdays.map((md) =>
               md.subDays.map((sd) => {
                 const v = totalsByDay.get(`${md.number}-${sd.ordinal}`) ?? 0
+                // 该轮整轮合计超限时，其所有子列一并标红
+                const mdOver = (totalsByMd.get(md.number) ?? 0) > MAX_PLAYERS_PER_MATCHDAY
                 return (
                   <td
                     key={`${md.number}-${sd.gdId}`}
-                    className={`matrix__td-total-cell ${v === 0 ? 'is-zero' : ''}`}
-                    title={`${sd.label} 出战球员数`}
+                    className={`matrix__td-total-cell ${v === 0 ? 'is-zero' : ''} ${mdOver ? 'is-over' : ''}`}
+                    title={`${sd.label} · ${sd.dateKey} 出战球员 ${v} 人`}
                   >
                     {v > 0 ? v : '—'}
                   </td>

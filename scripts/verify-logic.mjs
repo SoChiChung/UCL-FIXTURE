@@ -18,6 +18,15 @@ import MatchdayMatrix from '../src/components/MatchdayMatrix'
 import CardBoard from '../src/components/CardBoard'
 import cardsData from '../src/data/cards.json'
 import { buildFixtureData } from '../src/data/normalize'
+import {
+  MAX_TEAMS,
+  MAX_PLAYERS_PER_TEAM,
+  MAX_PLAYERS_PER_MATCHDAY,
+  playersInMatchday,
+  canAddTeam,
+  canSetPlayerCount,
+  maxPlayersForTeam,
+} from '../src/data/selection'
 
 const data = buildFixtureData()
 
@@ -173,56 +182,86 @@ check('空条件返回全部 36 队', filter(allCodes, []).length === 36)
 // 不存在的组合应返回 0
 check('不存在组合返回 0 队', filter(allCodes, [{ matchday: 1, ordinal: 9 }]).length === 0)
 
-console.log('\n=== 3. 球员数汇总 ===')
+console.log('\n=== 3. 选队 / 球员数约束（回归：曾只能选 10 支）===')
 
-// 复刻 MatchdayMatrix 的汇总逻辑
-const codes = new Set(['ARS', 'BAR', 'BAY'].filter((c) => data.teamByCode[c]))
-const realCodes = data.teams.filter((t) => codes.has(t.code)).map((t) => t.code)
-console.log(`  使用真实存在的队伍: ${realCodes.join(', ')}`)
+check('球队数上限 = 15', MAX_TEAMS === 15, `实际 ${MAX_TEAMS}`)
+check('单队球员数上限 = 3', MAX_PLAYERS_PER_TEAM === 3, `实际 ${MAX_PLAYERS_PER_TEAM}`)
+check('单轮参赛上限 = 15', MAX_PLAYERS_PER_MATCHDAY === 15, `实际 ${MAX_PLAYERS_PER_MATCHDAY}`)
 
-const totals = (playerCounts) => {
-  const map = new Map()
-  for (const md of data.matchdays) {
-    for (const sd of md.subDays) {
-      let sum = 0
-      for (const m of md.matches) {
-        if (m.gdId !== sd.gdId) continue
-        for (const ref of [m.home, m.away]) {
-          if (!codes.has(ref.code)) continue
-          sum += playerCounts[ref.code] ?? 1
-        }
-      }
-      map.set(`${md.number}-${sd.ordinal}`, sum)
-    }
-  }
-  return map
+// 取前 15 支真实球队
+const fifteen = data.teams.slice(0, 15).map((t) => t.code)
+console.log(`  测试用 15 队: ${fifteen.join(', ')}`)
+
+/** 整轮合计（与组件表尾口径一致） */
+const roundTotal = (sel, pc = {}) => playersInMatchday(data.matchdays[0], sel, pc)
+const overAnyRound = (sel, pc = {}) =>
+  data.matchdays.some((md) => playersInMatchday(md, sel, pc) > MAX_PLAYERS_PER_MATCHDAY)
+
+// 核心回归：每队 1 人时，选满 15 支恰好等于上限，且第 16 支必须被拦
+check('每队 1 人 × 15 队 = 15 人（刚好触顶）', roundTotal(fifteen) === 15, `${roundTotal(fifteen)}`)
+check('选满 15 支不超限', !overAnyRound(fifteen))
+const sixteenth = data.teams[15].code
+check('第 16 支被 canAddTeam 拦截', !canAddTeam(data.matchdays, fifteen, {}, sixteenth))
+check(
+  '只选 14 支时第 15 支可加',
+  canAddTeam(data.matchdays, fifteen.slice(0, 14), {}, data.teams[14].code),
+)
+
+// 每轮合计与轮次无关（每队每轮恰好 1 场）→ 各轮数值必须完全相同
+{
+  const perRound = data.matchdays.map((md) => playersInMatchday(md, fifteen, {}))
+  check(
+    '各轮合计恒等（每队每轮 1 场）',
+    perRound.every((v) => v === perRound[0]),
+    perRound.join(','),
+  )
 }
 
-const t1 = totals({})
-const t3 = totals({ ARS: 3 })
-const grand = (m) => Array.from(m.values()).reduce((a, b) => a + b, 0)
+// 球员数上限：已有 15 队时，任何一队都不能再加到 2 人
+check('15 队已满时某队无法设 2 人', !canSetPlayerCount(data.matchdays, fifteen, {}, fifteen[0], 2))
+check('该队最大可选降为 1', maxPlayersForTeam(data.matchdays, fifteen, {}, fifteen[0]) === 1)
 
-console.log(`  默认(每队1人) 各比赛日: ${Array.from(t1.entries()).map(([k, v]) => `${k}=${v}`).join(' ')}`)
-console.log(`  总计 = ${grand(t1)} 人次`)
-check('默认每人1人时合计 = 参赛队数×场次', grand(t1) === realCodes.length * 8, `${grand(t1)} vs ${realCodes.length * 8}`)
-// 某些比赛日可能没有所选球队参赛（如 MD1-比赛日一），此时应为 0
-check(
-  '零值列仅出现在无球队参赛的比赛日',
-  Array.from(t1.entries()).every(([k, v]) => {
-    const [md, ord] = k.split('-').map(Number)
-    const mday = data.matchdays.find((x) => x.number === md)
-    const sd = mday.subDays.find((s) => s.ordinal === ord)
-    const hasTeam = mday.matches.some(
-      (m) => m.gdId === sd.gdId && (codes.has(m.home.code) || codes.has(m.away.code)),
-    )
-    return hasTeam ? v > 0 : v === 0
-  }),
-  JSON.stringify(Array.from(t1.entries()).filter(([, v]) => v === 0)),
-)
-// 每队 8 场：ARS 从 1 人改 3 人，每轮 +2 → 8 轮共 +16
-check('ARS 改 3 人后合计 +16', grand(t3) === grand(t1) + 16, `${grand(t3)} vs ${grand(t1) + 16}`)
-check('默认合计 = 3队 × 8场 = 24', grand(t1) === 24, `实际 ${grand(t1)}`)
-check('三队全 3 人 → 72', grand(totals({ ARS: 3, BAR: 3, BAY: 3 })) === 72)
+// 13 队时：还有 2 个名额 → 某队可加到 3 人，但另一队就锁死在 1
+{
+  const sel = fifteen.slice(0, 13)
+  check('13 队时首队可加到 3 人', canSetPlayerCount(data.matchdays, sel, {}, sel[0], 3))
+  const pc = { ...sel.slice(0, 12).reduce((a, c) => ({ ...a, [c]: 3 }), {}), [sel[12]]: 1 }
+  const after = playersInMatchday(data.matchdays[0], sel, pc)
+  check('12 队 × 3 人 + 1 队 × 1 人 = 37 > 15，应被拦', !canSetPlayerCount(data.matchdays, sel, pc, sel[12], 2), `${after}`)
+}
+
+// 逐步加队：贪心加到不能再加，结果必然 = 15 人且不可再加
+{
+  const sel = []
+  const pc = {}
+  for (const t of data.teams) {
+    if (sel.length >= MAX_TEAMS) break
+    if (!canAddTeam(data.matchdays, sel, pc, t.code)) continue
+    sel.push(t.code)
+  }
+  check('贪心选满 15 支', sel.length === 15, `${sel.length}`)
+  check('贪心结果 = 15 人', roundTotal(sel) === 15, `${roundTotal(sel)}`)
+  const anyLeft = data.teams.some((t) => !sel.includes(t.code) && canAddTeam(data.matchdays, sel, pc, t.code))
+  check('贪心后无可再加入的队', !anyLeft)
+}
+
+// 边界：恰好 15 人时不能再加；14 人时可以
+{
+  const sel14 = fifteen.slice(0, 14)
+  check('14 人状态下可再加 1 队', canAddTeam(data.matchdays, sel14, {}, fifteen[14]))
+  // 14 队中已有一队设为 2 人 = 15 人触顶 → 该队再加到 3 须被拦
+  const pc = { [sel14[0]]: 2 }
+  check('14 人状态下首队确为 2 人', playersInMatchday(data.matchdays[0], sel14, pc) === 15)
+  check('触顶后该队再加到 3 须拦', !canSetPlayerCount(data.matchdays, sel14, pc, sel14[0], 3))
+  check('触顶后该队最大可选降为 2', maxPlayersForTeam(data.matchdays, sel14, pc, sel14[0]) === 2)
+  check('触顶后不能再加第 15 队', !canAddTeam(data.matchdays, sel14, pc, fifteen[14]))
+}
+
+console.log('\n=== 3b. 组件汇总口径（SSR 冒烟前置）===')
+const realCodes = fifteen.slice(0, 3)
+console.log(`  组件渲染用 3 队: ${realCodes.join(', ')}`)
+check('3 队每队 1 人 → 每轮 3 人', roundTotal(realCodes) === 3)
+check('3 队全 3 人 → 每轮 9 人', roundTotal(realCodes, { [realCodes[0]]: 3, [realCodes[1]]: 3, [realCodes[2]]: 3 }) === 9)
 
 console.log('\n=== 4. 组件可渲染（SSR 冒烟）===')
 try {
@@ -230,13 +269,33 @@ try {
     teams: data.teams,
     matchdays: data.matchdays,
     selectedCodes: realCodes,
-    maxTeams: 10,
+    maxTeams: MAX_TEAMS,
     onToggle: () => {},
   })
   const out = renderToStaticMarkup(html)
   check('TeamSelector 渲染成功', out.length > 500, `len=${out.length}`)
   check('含按比赛日筛选入口', out.includes('按比赛日筛选'))
   check('含已选球队代码', realCodes.every((c) => out.includes(c)))
+  check('计数显示为 x/15', out.includes(`3/${MAX_TEAMS}`))
+  check('含两条规则说明文案', out.includes('最多 15 支') && out.includes('15 人'))
+  // 复刻 App 的 blockReason 判定：只选 3 队时，剩余球队全部可勾
+  const blockReasonOf = (sel, pc) => (code) => {
+    if (sel.includes(code)) return null
+    if (sel.length >= MAX_TEAMS) return `最多同时选 ${MAX_TEAMS} 支`
+    if (!canAddTeam(data.matchdays, sel, pc, code)) {
+      return `该轮参赛球员已达 ${MAX_PLAYERS_PER_MATCHDAY} 人上限`
+    }
+    return null
+  }
+  const blockedNow = data.teams.filter((t) => blockReasonOf(realCodes, {})(t.code) !== null)
+  check('3 队时无球队被封', blockedNow.length === 0, String(blockedNow.length))
+  const blockedAt15 = data.teams.filter((t) => blockReasonOf(fifteen, {})(t.code) !== null)
+  check('选满 15 支时其余 21 队被封', blockedAt15.length === 21, String(blockedAt15.length))
+  // 14 队 + 一队 2 人 = 15 人触顶：未选球队应因「人头上限」而非「队数上限」被封
+  const pcTop = { [fifteen[0]]: 2 }
+  const sel14 = fifteen.slice(0, 14)
+  const r = blockReasonOf(sel14, pcTop)(fifteen[14])
+  check('触顶封禁原因是 15 人上限', typeof r === 'string' && r.includes('15 人上限'), String(r))
 } catch (e) {
   check('TeamSelector 渲染成功', false, e.message)
 }
@@ -244,16 +303,75 @@ try {
 try {
   const html = createElement(MatchdayMatrix, {
     matchdays: data.matchdays,
-    selectedTeams: data.teams.filter((t) => codes.has(t.code)),
+    selectedTeams: data.teams.filter((t) => realCodes.includes(t.code)),
     captainRoute: false,
     playerCounts: { [realCodes[0]]: 3 },
+    maxPlayersByCode: {},
     onPlayerCountChange: () => {},
   })
   const out = renderToStaticMarkup(html)
   check('MatchdayMatrix 渲染成功', out.length > 500, `len=${out.length}`)
   check('含参赛球员合计行', out.includes('参赛球员合计'))
+  check('表尾标注按比赛日统计', out.includes('按比赛日'))
   check('含总计行', out.includes('总计'))
   check('含球员数按钮 1/2/3', out.includes('>1<') && out.includes('>2<') && out.includes('>3<'))
+  // 表头角标：整轮口径 x/15（约束判定口径）
+  check('表头含整轮 x/15 角标', /\d+\/15 人/.test(out), '未见 x/15 角标')
+  check('表头含 3 队时的整轮合计 5/15', out.includes('5/15 人'), '未见 5/15')
+
+  // 表尾合计：每轮应为 3+3+1-1+1... = 首队 3 人 + 其余 1 人
+  const expected = 3 + 1 + 1
+  check('表尾口径与 playersInMatchday 一致', playersInMatchday(data.matchdays[0], realCodes, { [realCodes[0]]: 3 }) === expected)
+
+  // 不变量：同一轮的「各比赛日之和」必须等于「整轮合计」（表尾明细 与 表头角标同源）
+  {
+    const pc = { [realCodes[0]]: 3 }
+    const md0 = data.matchdays[0]
+    const byDay = md0.subDays.reduce((sum, sd) => {
+      let s = 0
+      for (const m of md0.matches) {
+        if (m.gdId !== sd.gdId) continue
+        for (const ref of [m.home, m.away]) {
+          if (realCodes.includes(ref.code)) s += pc[ref.code] ?? 1
+        }
+      }
+      return sum + s
+    }, 0)
+    check(
+      '各比赛日之和 = 整轮合计',
+      byDay === playersInMatchday(md0, realCodes, pc),
+      `${byDay} vs ${playersInMatchday(md0, realCodes, pc)}`,
+    )
+    // 且所有 8 轮都成立
+    const allOk = data.matchdays.every((md) => {
+      const daySum = md.subDays.reduce((sum, sd) => {
+        let s = 0
+        for (const m of md.matches) {
+          if (m.gdId !== sd.gdId) continue
+          for (const ref of [m.home, m.away]) {
+            if (realCodes.includes(ref.code)) s += pc[ref.code] ?? 1
+          }
+        }
+        return sum + s
+      }, 0)
+      return daySum === playersInMatchday(md, realCodes, pc)
+    })
+    check('8 轮均满足该不变量', allOk)
+  }
+
+  // 传 maxPlayersByCode=1 时，2/3 档必须带 disabled
+  const locked = renderToStaticMarkup(
+    createElement(MatchdayMatrix, {
+      matchdays: data.matchdays,
+      selectedTeams: data.teams.filter((t) => realCodes.includes(t.code)),
+      captainRoute: false,
+      playerCounts: {},
+      maxPlayersByCode: Object.fromEntries(realCodes.map((c) => [c, 1])),
+      onPlayerCountChange: () => {},
+    }),
+  )
+  check('触顶时 2/3 人档被禁用', locked.includes('matrix__pick--blocked'))
+  check('触顶提示文案存在', locked.includes('最多可选 1 名'))
 } catch (e) {
   check('MatchdayMatrix 渲染成功', false, e.message)
 }

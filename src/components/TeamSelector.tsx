@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { MAX_PLAYERS_PER_MATCHDAY } from '../data/selection'
 import type { Matchday, Team } from '../types'
 
 /** 从 "Pot 4" 提取数字 4（用于 Pot 升序排序，不依赖字符串/JSON 原始顺序） */
@@ -22,6 +23,11 @@ interface TeamSelectorProps {
   matchdays: Matchday[]
   selectedCodes: string[]
   maxTeams: number
+  /**
+   * 返回某队当前不可勾选的原因；返回 null 表示可勾选。
+   * 由 App 传入，内含「球队数上限」与「单轮 15 人上限」两条约束的合并判定。
+   */
+  blockReason?: (code: string) => string | null
   onToggle: (code: string) => void
 }
 
@@ -37,6 +43,7 @@ export default function TeamSelector({
   matchdays,
   selectedCodes,
   maxTeams,
+  blockReason,
   onToggle,
 }: TeamSelectorProps) {
   const [query, setQuery] = useState('')
@@ -117,7 +124,12 @@ export default function TeamSelector({
     dayFilters.some((x) => filterKey(x) === filterKey(f))
 
   const full = selectedCodes.length >= maxTeams
-  const isDisabled = (code: string) => !selectedCodes.includes(code) && full
+  /** 优先用外部传入的完整判定（含 15 人上限），否则退回「仅球队数上限」 */
+  const reasonOf = (code: string): string | null => {
+    if (selectedCodes.includes(code)) return null
+    if (blockReason) return blockReason(code)
+    return full ? `最多同时选 ${maxTeams} 支` : null
+  }
 
   return (
     <div className="selector">
@@ -126,6 +138,9 @@ export default function TeamSelector({
         <span className="selector__count">
           {selectedCodes.length}/{maxTeams}
         </span>
+      </div>
+      <div className="selector__rule">
+        最多 {maxTeams} 支 · 每个 Matchday 参赛球员合计 ≤ {MAX_PLAYERS_PER_MATCHDAY} 人
       </div>
       <input
         className="search__input selector__search"
@@ -202,15 +217,17 @@ export default function TeamSelector({
               <div className="selector__group-title">{pot}</div>
               {list.map((t) => {
                 const checked = selectedCodes.includes(t.code)
+                const why = reasonOf(t.code)
                 return (
                   <label
-                    className={`selector__item ${checked ? 'selector__item--checked' : ''}`}
+                    className={`selector__item ${checked ? 'selector__item--checked' : ''} ${why ? 'selector__item--blocked' : ''}`}
                     key={t.code}
+                    title={why ?? undefined}
                   >
                     <input
                       type="checkbox"
                       checked={checked}
-                      disabled={isDisabled(t.code)}
+                      disabled={why !== null}
                       onChange={() => onToggle(t.code)}
                     />
                     <span className="selector__code">{t.code}</span>
