@@ -8,7 +8,13 @@ interface MatchdayMatrixProps {
   matchdays: Matchday[]
   selectedTeams: Team[]
   captainRoute: boolean
+  /** 每支队伍选用的球员数（1~3），未设置时按 1 计 */
+  playerCounts: Record<string, number>
+  onPlayerCountChange: (code: string, count: number) => void
 }
+
+/** 单队球员数上限（题目要求：1~3）；下调此值即可同步限制 UI 与汇总 */
+const MAX_PLAYERS = 3
 
 interface TipState {
   match: Match
@@ -60,11 +66,16 @@ function FixtureCell({
 /**
  * 统一赛程矩阵：行 = 所选球队，列 = Matchday 1~8（每个 Matchday 内按北京自然日期拆子列）。
  * 复用 computeCaptainRoute 派生每轮的「日期+时刻」序号与撞车标记。
+ *
+ * 球队行内嵌球员数输入（1~3）；表尾汇总行按中文比赛日（比赛日一/二/…）
+ * 统计该比赛日所有已选球队合计出战的球员数。
  */
 export default function MatchdayMatrix({
   matchdays,
   selectedTeams,
   captainRoute,
+  playerCounts,
+  onPlayerCountChange,
 }: MatchdayMatrixProps) {
   const [tip, setTip] = useState<TipState | null>(null)
   const codes = new Set(selectedTeams.map((t) => t.code))
@@ -98,6 +109,28 @@ export default function MatchdayMatrix({
     slotByMd.set(md.number, map)
   }
 
+  /**
+   * 汇总：每个「比赛日」列（matchday + ordinal）累计出战球员数。
+   * 同一球队在同一比赛日只可能有一场比赛，故按比赛日累加各队球员数即可。
+   */
+  const totalsByDay = new Map<string, number>()
+  for (const md of matchdays) {
+    for (const sd of md.subDays) {
+      let sum = 0
+      for (const m of md.matches) {
+        if (m.gdId !== sd.gdId) continue
+        for (const ref of [m.home, m.away]) {
+          if (!codes.has(ref.code)) continue
+          sum += playerCounts[ref.code] ?? 1
+        }
+      }
+      totalsByDay.set(`${md.number}-${sd.ordinal}`, sum)
+    }
+  }
+
+  // 全场合计：所有可见比赛日之和
+  const grandTotal = Array.from(totalsByDay.values()).reduce((a, b) => a + b, 0)
+
   const tipLeft = tip ? Math.min(tip.x + 14, window.innerWidth - 260) : 0
   const tipTop = tip ? Math.min(tip.y + 14, window.innerHeight - 200) : 0
 
@@ -108,7 +141,7 @@ export default function MatchdayMatrix({
           <tr>
             <th rowSpan={2} className="matrix__th matrix__th--corner">
               球队
-              <span className="matrix__th-sub">已选</span>
+              <span className="matrix__th-sub">已选 / 球员数</span>
             </th>
             {matchdays.map((md) => (
               <th
@@ -139,7 +172,27 @@ export default function MatchdayMatrix({
           {selectedTeams.map((team) => (
             <tr key={team.code}>
               <th className="matrix__td-team" title={team.name}>
-                {team.code}
+                <span className="matrix__td-code">{team.code}</span>
+                <span className="matrix__td-count">
+                  <span className="matrix__td-count-label">选</span>
+                  {Array.from({ length: MAX_PLAYERS }, (_, i) => i + 1).map((n) => {
+                    const active = (playerCounts[team.code] ?? 1) === n
+                    return (
+                      <button
+                        type="button"
+                        key={n}
+                        className={`matrix__pick ${active ? 'matrix__pick--on' : ''}`}
+                        onClick={() => onPlayerCountChange(team.code, n)}
+                        aria-pressed={active}
+                        aria-label={`${team.name} 选 ${n} 名球员`}
+                        title={`从 ${team.name} 选 ${n} 名球员`}
+                      >
+                        {n}
+                      </button>
+                    )
+                  })}
+                  <span className="matrix__td-count-unit">人</span>
+                </span>
               </th>
               {matchdays.map((md) =>
                 md.subDays.map((sd) => {
@@ -170,6 +223,38 @@ export default function MatchdayMatrix({
             </tr>
           ))}
         </tbody>
+        <tfoot>
+          <tr>
+            <th className="matrix__td-total" scope="row">
+              参赛球员合计
+            </th>
+            {matchdays.map((md) =>
+              md.subDays.map((sd) => {
+                const v = totalsByDay.get(`${md.number}-${sd.ordinal}`) ?? 0
+                return (
+                  <td
+                    key={`${md.number}-${sd.gdId}`}
+                    className={`matrix__td-total-cell ${v === 0 ? 'is-zero' : ''}`}
+                    title={`${sd.label} 出战球员数`}
+                  >
+                    {v > 0 ? v : '—'}
+                  </td>
+                )
+              }),
+            )}
+          </tr>
+          <tr className="matrix__total-row2">
+            <th className="matrix__td-total matrix__td-total--grand" scope="row">
+              总计
+            </th>
+            <td
+              className="matrix__td-total-cell matrix__td-total-cell--grand"
+              colSpan={matchdays.reduce((a, md) => a + md.subDays.length, 0)}
+            >
+              {grandTotal} 人次
+            </td>
+          </tr>
+        </tfoot>
       </table>
 
       {tip &&
