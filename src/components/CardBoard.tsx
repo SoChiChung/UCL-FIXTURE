@@ -64,6 +64,28 @@ function nextThreshold(yellow: number): number | null {
 }
 
 /**
+ * 黄牌进度台阶。
+ *
+ * 规程 63.02：累计 4 张（未导致红牌）停赛一场，之后每再 2 张（6/8/10）再停一场。
+ * 因此进度条不能按「距榜首的占比」画——那样 2 黄就会占满整条，语义错误。
+ * 这里按「当前档位的容量」画格子：第 1 档 4 格（0→4），之后每档 2 格（4→6、6→8…），
+ * 2 黄就只亮 2 格。
+ */
+function yellowProgress(count: number): {
+  filled: number
+  total: number
+  tier: number
+  capped: boolean
+} {
+  const idx = SUSPEND_THRESHOLDS.findIndex((t) => count < t)
+  // 已越过最后一档（10 黄），按满格 + 封顶展示
+  if (idx === -1) return { filled: 2, total: 2, tier: SUSPEND_THRESHOLDS.length, capped: true }
+  const floor = idx === 0 ? 0 : SUSPEND_THRESHOLDS[idx - 1]
+  const ceiling = SUSPEND_THRESHOLDS[idx]
+  return { filled: count - floor, total: ceiling - floor, tier: idx + 1, capped: false }
+}
+
+/**
  * 红牌停赛文案。
  *
  * 关键点：红牌只自动停「下一场」，执行完毕即可出场。
@@ -189,7 +211,6 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
 
   const isYellow = tab === 'yellow'
   const rows = isYellow ? CARDS.yellowPlayers : CARDS.redPlayers
-  const max = rows.length ? Math.max(...rows.map((r) => r.count)) : 0
 
   return (
     <section className="cards" aria-label="欧冠球员黄红牌榜">
@@ -230,9 +251,25 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
           {rows.map((r, i) => {
             const code = codeOf(r.team)
             const hit = code != null && selected.has(code)
+            const prog = yellowProgress(r.count)
             const next = isYellow ? nextThreshold(r.count) : null
-            const risky = next != null && next - r.count <= 1
+            const gapToNext = next == null ? null : next - r.count
+            const risky = gapToNext != null && gapToNext <= 1
             const redBan = isYellow ? null : describeRedBan(r)
+            /** 黄牌右侧提示：已停赛过的球员要说明「再停一次」的语义 */
+            const yellowHint = !isYellow
+              ? null
+              : prog.capped
+                ? { label: '已封顶', title: '已达最后一档（10 黄），继续累计只会累积更多停赛' }
+                : r.count >= 4
+                  ? {
+                      label: `再${gapToNext}张停赛`,
+                      title: `已触发过停赛；再吃 ${gapToNext} 张（累计 ${next} 张）将再次停赛一场`,
+                    }
+                  : {
+                      label: `差${gapToNext}张停赛`,
+                      title: `再吃 ${gapToNext} 张黄牌即累计 ${next} 张，将停赛一场`,
+                    }
             return (
               <li
                 className={`cards__row ${hit ? 'cards__row--mine' : ''} ${risky ? 'cards__row--warn' : ''}`}
@@ -251,18 +288,27 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
                 <span className="cards__team" title={r.team ?? ''}>
                   {r.team ?? '—'}
                 </span>
-                <span className="cards__bar" aria-hidden="true">
+                {isYellow ? (
                   <span
-                    className={`cards__bar-fill cards__bar-fill--${tab}`}
-                    style={{ width: max ? `${(r.count / max) * 100}%` : '0%' }}
-                  />
-                </span>
-                {isYellow && next != null && (
-                  <span
-                    className={`cards__gap ${risky ? 'cards__gap--warn' : ''}`}
-                    title={`再吃 ${next - r.count} 张黄牌即累计 ${next} 张，将停赛一场`}
+                    className="cards__pips"
+                    role="img"
+                    aria-label={`第 ${prog.tier} 档：已累计 ${r.count} 张黄牌，本档共 ${prog.total} 格`}
                   >
-                    差{next - r.count}张停赛
+                    {Array.from({ length: prog.total }, (_, k) => (
+                      <span
+                        key={k}
+                        className={`cards__pip${k < prog.filled ? ' cards__pip--on' : ''}`}
+                      />
+                    ))}
+                  </span>
+                ) : (
+                  <span className="cards__bar" aria-hidden="true">
+                    <span className="cards__bar-fill cards__bar-fill--red" style={{ width: '100%' }} />
+                  </span>
+                )}
+                {yellowHint && (
+                  <span className={`cards__gap ${risky ? 'cards__gap--warn' : ''}`} title={yellowHint.title}>
+                    {yellowHint.label}
                   </span>
                 )}
                 {redBan && (
@@ -324,6 +370,18 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
             <li>
               <b>红牌</b>：直接红牌或两黄变红，自动停赛<b>下一场</b>欧战比赛，<b>执行完毕即可出场</b>
               —— 例如 MD1 吃红牌，MD2 停赛，MD3 就能打。情节严重者可能被纪律委员会追加停赛，本表不含追加场次。
+            </li>
+            <li>
+              <b>红牌不清黄牌</b>：红牌停赛只是一次独立的「执行停赛」，<b>黄牌累计原封不动保留</b>。
+              例如已累计 2 黄的人吃红牌停赛一场，复出后仍是 2 黄，还要再吃 2 张才会触发黄牌停赛。
+            </li>
+            <li>
+              <b>但导致红牌的黄牌不计入累计</b>：规程 63.02 明确限定为「未导致红牌的黄牌」，
+              所以两黄变红的那两张、以及直接红牌同场的黄牌，都不进黄牌累计。
+            </li>
+            <li>
+              <b>进度格怎么看</b>：一格 = 一张黄牌。第 1 档 4 格（4 黄触发停赛），
+              之后每档缩为 2 格（第 6、8、10 张各触发一次）。
             </li>
           </ul>
           <p className="cards__rule-foot">

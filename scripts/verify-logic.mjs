@@ -449,6 +449,22 @@ try {
   check('含具体更新时间', html.includes(cardsData.updatedAt.slice(0, 16)))
   check('已移除「手动拉取」类文案', !html.includes('npm run fetch:cards') && !html.includes('手动'))
   check('规则说明含「执行完毕即可出场」', html.includes('执行完毕即可出场'))
+  check('规则说明含「红牌不清黄牌」', html.includes('红牌不清黄牌'))
+
+  // 黄牌进度必须是「格数制」而不是「占比制」：第一档 4 格，2 黄只亮 2 格
+  const pipTotal = (html.match(/class="cards__pip[ "]/g) || []).length
+  const pipOn = (html.match(/cards__pip--on/g) || []).length
+  const yellowSum = cardsData.yellowPlayers.reduce((s, p) => s + p.count, 0)
+  const allFirstTier = cardsData.yellowPlayers.every((p) => p.count < 4)
+  check(
+    '黄牌进度按 4 格绘制（每人 4 格）',
+    pipTotal === cardsData.yellowPlayers.length * 4 || !allFirstTier,
+    `实际 ${pipTotal} 格 / 期望 ${cardsData.yellowPlayers.length * 4} 格`,
+  )
+  if (allFirstTier) {
+    check('亮格数等于黄牌数（2 黄只亮 2 格）', pipOn === yellowSum, `亮 ${pipOn} / 黄牌合计 ${yellowSum}`)
+    check('未出现「占满整条」的 100% 进度条', !html.includes('cards__bar-fill--yellow'))
+  }
 } catch (e) {
   check('CardBoard 渲染成功', false, e.message)
 }
