@@ -70,6 +70,95 @@ async function fetchStat(seasonId, statName) {
     }))
 }
 
+/** 带 UA/Referer 的 JSON 抓取（红牌定位会请求大量比赛详情） */
+async function fetchJson(url) {
+  const res = await fetch(url, { headers: HEADERS })
+  if (!res.ok) throw new Error(`HTTP ${res.status} ${url}`)
+  return res.json()
+}
+
+/** 并发受限的 map，避免一次性打爆 FotMob */
+async function mapLimit(items, limit, fn) {
+  const out = new Array(items.length)
+  let cursor = 0
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (cursor < items.length) {
+      const idx = cursor++
+      out[idx] = await fn(items[idx], idx)
+    }
+  })
+  await Promise.all(workers)
+  return out
+}
+
+/** 赛事赛程：已完赛场次 + 已完成的最大轮次（round 形如 "1".."8"） */
+async function fetchPlayedSchedule() {
+  const json = await fetchJson(`https://www.fotmob.com/api/data/leagues?id=${LEAGUE_ID}`)
+  const all = json?.fixtures?.allMatches ?? []
+  const played = all.filter((m) => m.status?.finished)
+  const playedMaxRound = played.length
+    ? Math.max(...played.map((m) => Number(m.round) || 0))
+    : 0
+  return { played, playedMaxRound }
+}
+
+/**
+ * 定位红牌「发生在第几轮」——停赛状态不能只靠赛季累计数推断。
+ *
+ * 规则：红牌（直接红牌或两黄变红）自动停赛**下一场**，执行完毕即可出场。
+ * 因此「MD1 吃红牌」的球员在 MD2 停赛后，MD3 是可以打的；而「MD2 吃红牌」的
+ * 球员才需要在 MD3 停赛。两者在累计红牌数上完全一样（都是 1），
+ * 必须回到比赛事件层（matchDetails）才能区分。
+ *
+ * 只抓红牌球员所在球队的已完赛比赛，按 gameId 去重 + 并发 4，成本可控。
+ */
+async function resolveRedCardRounds(redPlayers, played) {
+  const info = new Map()
+  if (!redPlayers.length || !played.length) return info
+
+  /** gameId → { round, players:Set } —— 同一场若两队都有红牌球员只抓一次 */
+  const games = new Map()
+  for (const p of redPlayers) {
+    const teamId = String(p.teamId ?? '')
+    if (!teamId) continue
+    for (const m of played) {
+      if (String(m.home?.id) !== teamId && String(m.away?.id) !== teamId) continue
+      const key = String(m.id)
+      if (!games.has(key)) games.set(key, { round: Number(m.round) || 0, players: new Set() })
+      games.get(key).players.add(p.playerId)
+    }
+  }
+
+  const tasks = [...games.entries()].map(([gameId, v]) => ({ gameId, ...v }))
+
+  await mapLimit(tasks, 4, async ({ gameId, round, players }) => {
+    let detail
+    try {
+      detail = await fetchJson(`https://www.fotmob.com/api/data/matchDetails?matchId=${gameId}`)
+    } catch (e) {
+      console.warn(`   ⚠️ 比赛 ${gameId} 详情抓取失败：${e.message}`)
+      return
+    }
+    const events = detail?.content?.matchFacts?.events?.events ?? []
+    for (const e of events) {
+      // 直接红牌 Red / 两黄变红 YellowRed 都判停赛一场
+      if (e.card !== 'Red' && e.card !== 'YellowRed') continue
+      if (!players.has(e.playerId)) continue
+      // 同一球员若多次吃红，保留最早一次
+      const prev = info.get(e.playerId)
+      if (prev && prev.matchday <= round) continue
+      info.set(e.playerId, {
+        matchday: round,
+        minute: e.time ?? null,
+        reason: e.cardReason?.defaultText ?? null,
+        secondYellow: e.card === 'YellowRed',
+      })
+    }
+  })
+
+  return info
+}
+
 /** 探测赛季 id 是否有效（避免把 404 HTML 当 JSON 解析） */
 async function assertSeason(seasonId) {
   try {
@@ -171,6 +260,32 @@ try {
     ...[...yellowPlayers, ...redPlayers].map((p) => p.appearances),
   )
 
+  // 红牌停赛推算：需要「红牌发生在第几轮」，故回到比赛事件层定位
+  const topReds = redPlayers.slice(0, TOP_N)
+  const { played, playedMaxRound } = await fetchPlayedSchedule()
+  const roundsCovered = Math.max(maxApps, playedMaxRound)
+  const redInfo = await resolveRedCardRounds(topReds, played)
+
+  /**
+   * 红牌停赛一场，执行完毕即可出场：
+   *   banMatchday = redAtMatchday + 1
+   *   banServed   = banMatchday <= roundsCovered
+   * 抓不到轮次时置 null，前端回退为「停赛 1 场」而不武断断言「停赛中」。
+   */
+  const redPlayersWithBan = topReds.map((p) => {
+    const hit = redInfo.get(p.playerId) ?? null
+    const banMatchday = hit ? hit.matchday + 1 : null
+    return {
+      ...p,
+      redAtMatchday: hit?.matchday ?? null,
+      redMinute: hit?.minute ?? null,
+      redReason: hit?.reason ?? null,
+      redSecondYellow: hit?.secondYellow ?? null,
+      banMatchday,
+      banServed: banMatchday == null ? null : banMatchday <= roundsCovered,
+    }
+  })
+
   const payload = {
     season: '2026/2027',
     seasonId,
@@ -185,10 +300,11 @@ try {
     source: 'FotMob (data.fotmob.com)',
     topN: TOP_N,
     /** 数据覆盖到的轮次 */
-    roundsCovered: maxApps,
+    roundsCovered,
     /** 球员级：只保留牌数最多的 TOP_N 位 */
     yellowPlayers: yellowPlayers.slice(0, TOP_N),
-    redPlayers: redPlayers.slice(0, TOP_N),
+    /** 红牌附带停赛推算字段（redAtMatchday / banMatchday / banServed 等） */
+    redPlayers: redPlayersWithBan,
     /** 球队级总量（参考用，不做停赛推算） */
     yellowTeams: yellowTeams.slice(0, TOP_N),
     redTeams: redTeams.slice(0, TOP_N),
@@ -197,15 +313,24 @@ try {
 
   console.log(`✅ 球员黄牌 TOP${payload.yellowPlayers.length} / 红牌 TOP${payload.redPlayers.length}`)
   console.log(`   球队黄牌 ${yellowTeams.length} 队 / 球队红牌 ${redTeams.length} 队`)
-  console.log(`   覆盖轮次：${maxApps}轮  更新时间：${payload.updatedAt}（北京时间）`)
+  console.log(`   覆盖轮次：${roundsCovered}轮  更新时间：${payload.updatedAt}（北京时间）`)
   console.log(`   → ${OUT}`)
   const maxY = payload.yellowPlayers[0]
   if (maxY) {
     console.log(`   黄牌 TOP1: ${maxY.player} (${maxY.team}) ${maxY.count} 黄`)
   }
-  const maxR = payload.redPlayers[0]
-  if (maxR) {
-    console.log(`   红牌 TOP1: ${maxR.player} (${maxR.team}) ${maxR.count} 红`)
+  if (payload.redPlayers.length) {
+    console.log('   红牌停赛推算：')
+    for (const r of payload.redPlayers) {
+      const at = r.redAtMatchday == null ? '轮次未知' : `MD${r.redAtMatchday} ${r.redMinute ?? '?'}'`
+      const ban =
+        r.banMatchday == null
+          ? '停赛 1 场（执行轮次未知）'
+          : r.banServed
+            ? `MD${r.banMatchday} 已停赛完毕 → 可出战`
+            : `MD${r.banMatchday} 停赛`
+      console.log(`     ${r.player.padEnd(24)} ${String(r.team).padEnd(20)} ${at.padEnd(14)} ${ban}`)
+    }
   }
 } catch (err) {
   console.error('❌ 抓取失败：', err.message)

@@ -2277,6 +2277,12 @@ html:not(.supports-flex-gap) .mobile-tabbar__tab > * + * { margin-top: 2px; }
   color: #f07070;
 }
 
+/* 停赛已执行完毕：下一轮可出战，风险已解除 */
+.cards__gap--ok {
+  background: rgba(74, 222, 128, 0.16);
+  color: var(--success);
+}
+
 /* 接近停赛阈值：距下一档 ≤1 张时高亮 */
 .cards__row--warn {
   background: rgba(220, 60, 60, 0.08);

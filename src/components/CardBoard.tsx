@@ -12,6 +12,17 @@ interface PlayerCardRow {
   other: number
   appearances: number
   minutes: number
+  /** ── 以下为红牌专用（黄牌行为 undefined）── */
+  /** 红牌发生轮次；null = 未能定位（数据缺失） */
+  redAtMatchday?: number | null
+  redMinute?: number | null
+  redReason?: string | null
+  /** 是否为两黄变红 */
+  redSecondYellow?: boolean | null
+  /** 停赛执行轮次 = 红牌轮次 + 1 */
+  banMatchday?: number | null
+  /** 停赛是否已执行完毕（true = 下一轮可出战） */
+  banServed?: boolean | null
 }
 
 interface TeamCardRow {
@@ -53,6 +64,40 @@ function nextThreshold(yellow: number): number | null {
 }
 
 /**
+ * 红牌停赛文案。
+ *
+ * 关键点：红牌只自动停「下一场」，执行完毕即可出场。
+ * MD1 吃红牌的人 MD2 停赛、MD3 就能打；只有 MD{n} 吃红牌的人才是 MD{n+1} 停赛。
+ * 因此不能对红牌榜统一标注「停赛中」——必须看停赛是否已执行。
+ */
+function describeRedBan(r: PlayerCardRow): { label: string; title: string; tone: 'ok' | 'warn' | 'muted' } {
+  const at =
+    r.redAtMatchday == null
+      ? ''
+      : `（${r.redSecondYellow ? '两黄变红' : '直接红牌'}，MD${r.redAtMatchday}${r.redMinute ? ` ${r.redMinute}'` : ''}）`
+
+  if (r.banMatchday == null) {
+    return {
+      label: '停赛 1 场',
+      title: `该球员吃到红牌${at}，自动停赛 1 场；具体执行轮次未能定位`,
+      tone: 'muted',
+    }
+  }
+  if (r.banServed) {
+    return {
+      label: `MD${r.banMatchday} 已停赛`,
+      title: `红牌${at}，停赛已在 MD${r.banMatchday} 执行完毕 —— 下一轮可以出战`,
+      tone: 'ok',
+    }
+  }
+  return {
+    label: `MD${r.banMatchday} 停赛`,
+    title: `红牌${at}，将在 MD${r.banMatchday} 停赛`,
+    tone: 'warn',
+  }
+}
+
+/**
  * FotMob 用球队全称，本项目 fixtures.json 用另一套官方名 + 三字缩写。
  * 这里把 FotMob 队名映射到本项目缩写，仅用于「已选球队高亮」；
  * 一个球队名可对应多个别名（同一队的不同写法），故用数组。
@@ -76,6 +121,7 @@ const NAME_TO_CODE: Record<string, string[]> = {
   'Galatasaray': ['GAL'],
   Inter: ['INT'],
   'Inter Milan': ['INT'],
+  Internazionale: ['INT'],
   Lille: ['LIL'],
   Liverpool: ['LIV'],
   'Manchester City': ['MCI'],
@@ -186,6 +232,7 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
             const hit = code != null && selected.has(code)
             const next = isYellow ? nextThreshold(r.count) : null
             const risky = next != null && next - r.count <= 1
+            const redBan = isYellow ? null : describeRedBan(r)
             return (
               <li
                 className={`cards__row ${hit ? 'cards__row--mine' : ''} ${risky ? 'cards__row--warn' : ''}`}
@@ -218,7 +265,20 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
                     差{next - r.count}张停赛
                   </span>
                 )}
-                {!isYellow && <span className="cards__gap cards__gap--warn">停赛中</span>}
+                {redBan && (
+                  <span
+                    className={`cards__gap${
+                      redBan.tone === 'ok'
+                        ? ' cards__gap--ok'
+                        : redBan.tone === 'warn'
+                          ? ' cards__gap--warn'
+                          : ''
+                    }`}
+                    title={redBan.title}
+                  >
+                    {redBan.label}
+                  </span>
+                )}
                 <span className="cards__count">{r.count}</span>
               </li>
             )
@@ -262,7 +322,8 @@ export default function CardBoard({ selectedCodes }: CardBoardProps) {
               <b>赛季末清零</b>：所有黄牌及待执行停赛在赛季结束时失效。
             </li>
             <li>
-              <b>红牌</b>：被直接罚下者自动停赛下一场欧战比赛；情节严重可被追加停赛。
+              <b>红牌</b>：直接红牌或两黄变红，自动停赛<b>下一场</b>欧战比赛，<b>执行完毕即可出场</b>
+              —— 例如 MD1 吃红牌，MD2 停赛，MD3 就能打。情节严重者可能被纪律委员会追加停赛，本表不含追加场次。
             </li>
           </ul>
           <p className="cards__rule-foot">

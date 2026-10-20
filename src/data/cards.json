@@ -1,7 +1,7 @@
 {
   "season": "2026/2027",
   "seasonId": 47760,
-  "updatedAt": "2026-10-20 17:29",
+  "updatedAt": "2026-10-20 17:55",
   "updatePolicy": "每个比赛日前 2 天至后 2 天，每天 09:00 自动更新（北京时间）",
   "source": "FotMob (data.fotmob.com)",
   "topN": 10,
@@ -139,7 +139,13 @@
       "count": 1,
       "other": 0,
       "appearances": 1,
-      "minutes": 56
+      "minutes": 56,
+      "redAtMatchday": 1,
+      "redMinute": 56,
+      "redReason": "Violent conduct",
+      "redSecondYellow": false,
+      "banMatchday": 2,
+      "banServed": true
     },
     {
       "player": "Leny Yoro",
@@ -151,7 +157,13 @@
       "count": 1,
       "other": 0,
       "appearances": 2,
-      "minutes": 164
+      "minutes": 164,
+      "redAtMatchday": 2,
+      "redMinute": 74,
+      "redReason": "Professional foul",
+      "redSecondYellow": false,
+      "banMatchday": 3,
+      "banServed": false
     },
     {
       "player": "Michael Olise",
@@ -163,7 +175,13 @@
       "count": 1,
       "other": 0,
       "appearances": 2,
-      "minutes": 163
+      "minutes": 163,
+      "redAtMatchday": 2,
+      "redMinute": 74,
+      "redReason": null,
+      "redSecondYellow": true,
+      "banMatchday": 3,
+      "banServed": false
     },
     {
       "player": "Mikulás Konečný",
@@ -175,7 +193,13 @@
       "count": 1,
       "other": 0,
       "appearances": 1,
-      "minutes": 4
+      "minutes": 4,
+      "redAtMatchday": 1,
+      "redMinute": 49,
+      "redReason": "Foul",
+      "redSecondYellow": false,
+      "banMatchday": 2,
+      "banServed": true
     },
     {
       "player": "Odin Lurås Bjørtuft",
@@ -187,7 +211,13 @@
       "count": 1,
       "other": 0,
       "appearances": 1,
-      "minutes": 87
+      "minutes": 87,
+      "redAtMatchday": 1,
+      "redMinute": 87,
+      "redReason": "Professional foul",
+      "redSecondYellow": false,
+      "banMatchday": 2,
+      "banServed": true
     }
   ],
   "yellowTeams": [

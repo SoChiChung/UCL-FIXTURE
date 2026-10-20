@@ -406,6 +406,38 @@ console.log(
 )
 check('每条都能算出下一档阈值或已达上限', cardsData.yellowPlayers.every((p) => nextOf(p.count) === null || nextOf(p.count) > p.count))
 
+// 红牌停赛推算：红牌只停下一场，执行完毕即可出场
+{
+  const reds = cardsData.redPlayers
+  console.log(
+    `  红牌停赛: ${reds
+      .map(
+        (r) =>
+          `${r.player}:${r.redAtMatchday == null ? '—' : `MD${r.redAtMatchday}`}→${
+            r.banMatchday == null ? '?' : `MD${r.banMatchday}`
+          }${r.banServed === true ? '（已毕/可出战）' : r.banServed === false ? '（待停赛）' : '（未知）'}`,
+      )
+      .join('  ')}`,
+  )
+  check(
+    '红牌条目含停赛推算字段',
+    reds.every((r) => 'redAtMatchday' in r && 'banMatchday' in r && 'banServed' in r),
+  )
+  check(
+    '停赛轮次 = 红牌轮次 + 1',
+    reds.every((r) => r.banMatchday == null || r.banMatchday === r.redAtMatchday + 1),
+  )
+  check(
+    '停赛是否执行与覆盖轮次一致',
+    reds.every((r) => r.banServed == null || r.banServed === r.banMatchday <= cardsData.roundsCovered),
+  )
+  check(
+    '停赛推算结果存在已执行完毕者',
+    reds.some((r) => r.banServed === true),
+    '若无此条，说明「已停赛完毕」与「下一场停赛」未被区分',
+  )
+}
+
 try {
   const html = renderToStaticMarkup(createElement(CardBoard, { selectedCodes: ['LIV', 'BAR'] }))
   check('CardBoard 渲染成功', html.length > 500, `len=${html.length}`)
@@ -416,6 +448,7 @@ try {
   check('含 4 黄新规表述', html.includes('累计 4 黄'))
   check('含具体更新时间', html.includes(cardsData.updatedAt.slice(0, 16)))
   check('已移除「手动拉取」类文案', !html.includes('npm run fetch:cards') && !html.includes('手动'))
+  check('规则说明含「执行完毕即可出场」', html.includes('执行完毕即可出场'))
 } catch (e) {
   check('CardBoard 渲染成功', false, e.message)
 }
