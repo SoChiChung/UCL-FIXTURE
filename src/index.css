@@ -2340,10 +2340,6 @@ html:not(.supports-flex-gap) .mobile-tabbar__tab > * + * { margin-top: 2px; }
   border-radius: var(--r-full);
 }
 
-.cards__bar-fill--yellow {
-  background: linear-gradient(90deg, #f0c83c 0%, #f0a83c 100%);
-}
-
 .cards__bar-fill--red {
   background: linear-gradient(90deg, #dc3c3c 0%, #f07070 100%);
 }
