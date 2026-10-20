@@ -16,9 +16,12 @@ on:
 
 permissions:
   contents: write
-  concurrency:
-    group: cards-update
-    cancel-in-progress: true
+
+# concurrency 必须是顶层键；此前误嵌进 permissions，导致整个 workflow 解析失败，
+# 定时任务从未被注册（这也是此前 10/14 之后榜单没自动更新的原因）。
+concurrency:
+  group: cards-update
+  cancel-in-progress: true
 
 jobs:
   update:
