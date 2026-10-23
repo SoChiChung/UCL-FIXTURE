@@ -1,7 +1,7 @@
 {
   "season": "2026/2027",
   "seasonId": 47760,
-  "updatedAt": "2026-10-22 13:44",
+  "updatedAt": "2026-10-23 13:42",
   "updatePolicy": "每个比赛日前 2 天至后 2 天，每天 09:00 自动更新（北京时间）",
   "source": "FotMob (data.fotmob.com)",
   "topN": 10,
@@ -16,8 +16,8 @@
       "country": "BRA",
       "count": 3,
       "other": 0,
-      "appearances": 2,
-      "minutes": 171
+      "appearances": 3,
+      "minutes": 261
     },
     {
       "player": "Akim Zedadka",
@@ -40,8 +40,8 @@
       "country": "ESP",
       "count": 2,
       "other": 0,
-      "appearances": 2,
-      "minutes": 15
+      "appearances": 3,
+      "minutes": 85
     },
     {
       "player": "Armando Obispo",
@@ -64,8 +64,8 @@
       "country": "BEL",
       "count": 2,
       "other": 0,
-      "appearances": 2,
-      "minutes": 162
+      "appearances": 3,
+      "minutes": 241
     },
     {
       "player": "Félix Lemaréchal",
@@ -76,8 +76,8 @@
       "country": "FRA",
       "count": 2,
       "other": 0,
-      "appearances": 2,
-      "minutes": 42
+      "appearances": 3,
+      "minutes": 109
     },
     {
       "player": "Giovanni Di Lorenzo",
@@ -100,8 +100,8 @@
       "country": "TUR",
       "count": 2,
       "other": 0,
-      "appearances": 2,
-      "minutes": 127
+      "appearances": 3,
+      "minutes": 186
     },
     {
       "player": "Ismail Jakobs",
@@ -138,14 +138,14 @@
       "country": "ITA",
       "count": 1,
       "other": 0,
-      "appearances": 2,
-      "minutes": 180,
-      "redAtMatchday": 0,
+      "appearances": 3,
+      "minutes": 248,
+      "redAtMatchday": 3,
       "redMinute": 68,
-      "redReason": "Foul",
+      "redReason": null,
       "redSecondYellow": true,
-      "banMatchday": 1,
-      "banServed": true
+      "banMatchday": 4,
+      "banServed": false
     },
     {
       "player": "Ethan Mbappé",
@@ -158,11 +158,11 @@
       "other": 0,
       "appearances": 1,
       "minutes": 56,
-      "redAtMatchday": 0,
+      "redAtMatchday": 1,
       "redMinute": 56,
       "redReason": "Violent conduct",
       "redSecondYellow": false,
-      "banMatchday": 1,
+      "banMatchday": 2,
       "banServed": true
     },
     {
@@ -176,11 +176,11 @@
       "other": 0,
       "appearances": 2,
       "minutes": 164,
-      "redAtMatchday": 0,
+      "redAtMatchday": 2,
       "redMinute": 74,
       "redReason": "Professional foul",
       "redSecondYellow": false,
-      "banMatchday": 1,
+      "banMatchday": 3,
       "banServed": true
     },
     {
@@ -194,11 +194,11 @@
       "other": 0,
       "appearances": 2,
       "minutes": 163,
-      "redAtMatchday": 0,
-      "redMinute": 73,
-      "redReason": "Dissent",
+      "redAtMatchday": 2,
+      "redMinute": 74,
+      "redReason": null,
       "redSecondYellow": true,
-      "banMatchday": 1,
+      "banMatchday": 3,
       "banServed": true
     },
     {
@@ -212,11 +212,11 @@
       "other": 0,
       "appearances": 1,
       "minutes": 4,
-      "redAtMatchday": 0,
+      "redAtMatchday": 1,
       "redMinute": 49,
-      "redReason": "Professional foul",
+      "redReason": "Foul",
       "redSecondYellow": false,
-      "banMatchday": 1,
+      "banMatchday": 2,
       "banServed": true
     },
     {
@@ -230,12 +230,12 @@
       "other": 0,
       "appearances": 3,
       "minutes": 96,
-      "redAtMatchday": 0,
+      "redAtMatchday": 3,
       "redMinute": 64,
       "redReason": "Serious foul play",
       "redSecondYellow": false,
-      "banMatchday": 1,
-      "banServed": true
+      "banMatchday": 4,
+      "banServed": false
     },
     {
       "player": "Odin Lurås Bjørtuft",
@@ -248,11 +248,11 @@
       "other": 0,
       "appearances": 2,
       "minutes": 177,
-      "redAtMatchday": 0,
+      "redAtMatchday": 1,
       "redMinute": 87,
       "redReason": "Professional foul",
       "redSecondYellow": false,
-      "banMatchday": 1,
+      "banMatchday": 2,
       "banServed": true
     }
   ],
@@ -289,6 +289,18 @@
       "color": "#F0602B",
       "country": "UKR",
       "count": 9,
+      "other": 0,
+      "appearances": 3,
+      "minutes": 0
+    },
+    {
+      "player": "LASK",
+      "playerId": 0,
+      "team": null,
+      "teamId": 9977,
+      "color": "#101010",
+      "country": "AUT",
+      "count": 8,
       "other": 0,
       "appearances": 3,
       "minutes": 0
@@ -361,18 +373,6 @@
       "color": "#e19d00",
       "country": "ESP",
       "count": 7,
-      "other": 0,
-      "appearances": 3,
-      "minutes": 0
-    },
-    {
-      "player": "Como",
-      "playerId": 0,
-      "team": null,
-      "teamId": 10171,
-      "color": "#005ea9",
-      "country": "ITA",
-      "count": 6,
       "other": 0,
       "appearances": 3,
       "minutes": 0
