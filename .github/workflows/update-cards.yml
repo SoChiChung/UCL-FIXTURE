@@ -16,6 +16,8 @@ on:
 
 permissions:
   contents: write
+  # 数据更新后需要用 gh workflow run 触发 deploy.yml，因此需要 actions: write
+  actions: write
 
 # concurrency 必须是顶层键；此前误嵌进 permissions，导致整个 workflow 解析失败，
 # 定时任务从未被注册（这也是此前 10/14 之后榜单没自动更新的原因）。
@@ -41,10 +43,14 @@ jobs:
         run: node scripts/fetch-cards.mjs
 
       # 有变化才提交并推送（保持仓库整洁，不刷无意义 commit）
+      # 注意：GITHUB_TOKEN 推送的 commit 不会触发其他 workflow（GitHub 防递归），
+      # 所以 deploy.yml 的 push 触发器在这里是失效的，必须在后面显式 dispatch。
       - name: Commit if changed
+        id: commit
         run: |
           if git diff --quiet -- src/data/cards.json; then
             echo "cards.json 无变化，跳过提交"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
@@ -53,3 +59,11 @@ jobs:
           MSG="chore(cards): 更新黄红牌榜 $(TZ=Asia/Shanghai date +%Y-%m-%d)"
           git commit -m "$MSG"
           git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # workflow_dispatch 是 GITHUB_TOKEN 防递归规则的例外，可以正常触发部署
+      - name: Trigger deploy
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy.yml --ref main
