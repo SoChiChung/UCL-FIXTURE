@@ -18,7 +18,10 @@
  *   - 只保留 StatValue > 0 的记录
  *   - 结果落盘为静态 JSON，前端不直连第三方（CORS + 稳定性）
  *
- * 用法：node scripts/fetch-cards.mjs [seasonId]
+ * 用法：node scripts/fetch-cards.mjs [seasonId] [--force]
+ *
+ *   seasonId  可选，缺省用 DEFAULT_SEASON；`--force` 不会被误当成赛季号
+ *   --force   跳过「比赛日 ±2 天」窗口判断，本地手动刷新用（等价 CARDS_FORCE=1）
  */
 
 import { writeFileSync, readFileSync, existsSync } from 'node:fs'
@@ -238,7 +241,15 @@ function inUpdateWindow() {
   return inWindow
 }
 
-const seasonId = Number(process.argv[2] ?? DEFAULT_SEASON)
+const seasonArg = process.argv.slice(2).find((a) => !a.startsWith('-'))
+const seasonId = seasonArg === undefined ? DEFAULT_SEASON : Number(seasonArg)
+
+if (!Number.isInteger(seasonId) || seasonId <= 0) {
+  console.error(
+    `❌ 赛季号无效：${seasonArg}（应为 FotMob TournamentId，如 ${DEFAULT_SEASON}）`,
+  )
+  process.exit(1)
+}
 
 try {
   // 非更新窗口直接跳过（退出码 0，让 CI 的"有变化才提交"逻辑保持安静）
