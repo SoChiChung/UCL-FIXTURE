@@ -1,7 +1,7 @@
 {
   "season": "2026/2027",
   "seasonId": 47760,
-  "updatedAt": "2026-11-02 21:53",
+  "updatedAt": "2026-11-03 15:32",
   "updatePolicy": "每个比赛日前 2 天至后 2 天，每天 09:00 自动更新（北京时间）",
   "source": "FotMob (data.fotmob.com)",
   "topN": 10,
