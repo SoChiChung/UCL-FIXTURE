@@ -1,12 +1,24 @@
 {
   "season": "2026/2027",
   "seasonId": 47760,
-  "updatedAt": "2026-11-03 15:32",
+  "updatedAt": "2026-11-04 15:13",
   "updatePolicy": "每个比赛日前 2 天至后 2 天，每天 09:00 自动更新（北京时间）",
   "source": "FotMob (data.fotmob.com)",
   "topN": 10,
-  "roundsCovered": 3,
+  "roundsCovered": 4,
   "yellowPlayers": [
+    {
+      "player": "Hakan Çalhanoglu",
+      "playerId": 304733,
+      "team": "Internazionale",
+      "teamId": 8636,
+      "color": "#010E80",
+      "country": "TUR",
+      "count": 3,
+      "other": 0,
+      "appearances": 4,
+      "minutes": 243
+    },
     {
       "player": "Marlon Gomes",
       "playerId": 1396465,
@@ -16,8 +28,20 @@
       "country": "BRA",
       "count": 3,
       "other": 0,
-      "appearances": 3,
-      "minutes": 261
+      "appearances": 4,
+      "minutes": 344
+    },
+    {
+      "player": "Santiago Mouriño",
+      "playerId": 1407468,
+      "team": "Villarreal",
+      "teamId": 10205,
+      "color": "#e19d00",
+      "country": "URU",
+      "count": 3,
+      "other": 0,
+      "appearances": 4,
+      "minutes": 360
     },
     {
       "player": "Akim Zedadka",
@@ -30,6 +54,18 @@
       "other": 0,
       "appearances": 3,
       "minutes": 255
+    },
+    {
+      "player": "Alberto Moleiro",
+      "playerId": 1184694,
+      "team": "Villarreal",
+      "teamId": 10205,
+      "color": "#e19d00",
+      "country": "ESP",
+      "count": 2,
+      "other": 0,
+      "appearances": 4,
+      "minutes": 180
     },
     {
       "player": "Alvaro Carreras",
@@ -64,8 +100,20 @@
       "country": "BEL",
       "count": 2,
       "other": 0,
-      "appearances": 3,
-      "minutes": 241
+      "appearances": 4,
+      "minutes": 286
+    },
+    {
+      "player": "Cristian Martínez",
+      "playerId": 727101,
+      "team": "Slovan Bratislava",
+      "teamId": 6019,
+      "color": "#43B1E6",
+      "country": "PAN",
+      "count": 2,
+      "other": 0,
+      "appearances": 4,
+      "minutes": 251
     },
     {
       "player": "Félix Lemaréchal",
@@ -78,54 +126,6 @@
       "other": 0,
       "appearances": 3,
       "minutes": 109
-    },
-    {
-      "player": "Giovanni Di Lorenzo",
-      "playerId": 414906,
-      "team": "Napoli",
-      "teamId": 9875,
-      "color": "#12A0D7",
-      "country": "ITA",
-      "count": 2,
-      "other": 0,
-      "appearances": 3,
-      "minutes": 270
-    },
-    {
-      "player": "Hakan Çalhanoglu",
-      "playerId": 304733,
-      "team": "Internazionale",
-      "teamId": 8636,
-      "color": "#010E80",
-      "country": "TUR",
-      "count": 2,
-      "other": 0,
-      "appearances": 3,
-      "minutes": 186
-    },
-    {
-      "player": "Ismail Jakobs",
-      "playerId": 906945,
-      "team": "Galatasaray",
-      "teamId": 8637,
-      "color": "#8D072A",
-      "country": "SEN",
-      "count": 2,
-      "other": 0,
-      "appearances": 3,
-      "minutes": 270
-    },
-    {
-      "player": "Ismail Yüksek",
-      "playerId": 1183589,
-      "team": "Fenerbahçe",
-      "teamId": 8695,
-      "color": "#002D72",
-      "country": "TUR",
-      "count": 2,
-      "other": 0,
-      "appearances": 3,
-      "minutes": 167
     }
   ],
   "redPlayers": [
@@ -145,7 +145,7 @@
       "redReason": null,
       "redSecondYellow": true,
       "banMatchday": 4,
-      "banServed": false
+      "banServed": true
     },
     {
       "player": "Ethan Mbappé",
@@ -174,14 +174,32 @@
       "country": "FRA",
       "count": 1,
       "other": 0,
-      "appearances": 2,
-      "minutes": 164,
+      "appearances": 3,
+      "minutes": 254,
       "redAtMatchday": 2,
       "redMinute": 74,
       "redReason": "Professional foul",
       "redSecondYellow": false,
       "banMatchday": 3,
       "banServed": true
+    },
+    {
+      "player": "Matheus Cunha",
+      "playerId": 863098,
+      "team": "Manchester United",
+      "teamId": 10260,
+      "color": "#C70101",
+      "country": "BRA",
+      "count": 1,
+      "other": 0,
+      "appearances": 4,
+      "minutes": 235,
+      "redAtMatchday": 4,
+      "redMinute": 90,
+      "redReason": "Foul",
+      "redSecondYellow": true,
+      "banMatchday": 5,
+      "banServed": false
     },
     {
       "player": "Michael Olise",
@@ -192,8 +210,8 @@
       "country": "FRA",
       "count": 1,
       "other": 0,
-      "appearances": 2,
-      "minutes": 163,
+      "appearances": 3,
+      "minutes": 253,
       "redAtMatchday": 2,
       "redMinute": 74,
       "redReason": null,
@@ -235,7 +253,7 @@
       "redReason": "Serious foul play",
       "redSecondYellow": false,
       "banMatchday": 4,
-      "banServed": false
+      "banServed": true
     },
     {
       "player": "Odin Lurås Bjørtuft",
@@ -246,8 +264,8 @@
       "country": "NOR",
       "count": 1,
       "other": 0,
-      "appearances": 2,
-      "minutes": 177,
+      "appearances": 3,
+      "minutes": 267,
       "redAtMatchday": 1,
       "redMinute": 87,
       "redReason": "Professional foul",
@@ -257,6 +275,42 @@
     }
   ],
   "yellowTeams": [
+    {
+      "player": "Villarreal",
+      "playerId": 0,
+      "team": null,
+      "teamId": 10205,
+      "color": "#e19d00",
+      "country": "ESP",
+      "count": 11,
+      "other": 0,
+      "appearances": 4,
+      "minutes": 0
+    },
+    {
+      "player": "Shakhtar Donetsk",
+      "playerId": 0,
+      "team": null,
+      "teamId": 9728,
+      "color": "#F0602B",
+      "country": "UKR",
+      "count": 10,
+      "other": 0,
+      "appearances": 4,
+      "minutes": 0
+    },
+    {
+      "player": "Inter",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8636,
+      "color": "#010E80",
+      "country": "ITA",
+      "count": 9,
+      "other": 1,
+      "appearances": 4,
+      "minutes": 0
+    },
     {
       "player": "Club Brugge",
       "playerId": 0,
@@ -282,15 +336,39 @@
       "minutes": 0
     },
     {
-      "player": "Shakhtar Donetsk",
+      "player": "Galatasaray",
       "playerId": 0,
       "team": null,
-      "teamId": 9728,
-      "color": "#F0602B",
-      "country": "UKR",
+      "teamId": 8637,
+      "color": "#8D072A",
+      "country": "TUR",
       "count": 9,
       "other": 0,
-      "appearances": 3,
+      "appearances": 4,
+      "minutes": 0
+    },
+    {
+      "player": "VfB Stuttgart",
+      "playerId": 0,
+      "team": null,
+      "teamId": 10269,
+      "color": "#D30029",
+      "country": "GER",
+      "count": 9,
+      "other": 0,
+      "appearances": 4,
+      "minutes": 0
+    },
+    {
+      "player": "Manchester United",
+      "playerId": 0,
+      "team": null,
+      "teamId": 10260,
+      "color": "#C70101",
+      "country": "ENG",
+      "count": 8,
+      "other": 2,
+      "appearances": 4,
       "minutes": 0
     },
     {
@@ -302,7 +380,7 @@
       "country": "AUT",
       "count": 8,
       "other": 0,
-      "appearances": 3,
+      "appearances": 4,
       "minutes": 0
     },
     {
@@ -316,69 +394,21 @@
       "other": 0,
       "appearances": 3,
       "minutes": 0
-    },
-    {
-      "player": "Real Betis",
-      "playerId": 0,
-      "team": null,
-      "teamId": 8603,
-      "color": "#009048",
-      "country": "ESP",
-      "count": 8,
-      "other": 0,
-      "appearances": 3,
-      "minutes": 0
-    },
-    {
-      "player": "Sabah FK",
-      "playerId": 0,
-      "team": null,
-      "teamId": 951893,
-      "color": "#101010",
-      "country": "AZE",
-      "count": 8,
-      "other": 0,
-      "appearances": 3,
-      "minutes": 0
-    },
-    {
-      "player": "Inter",
-      "playerId": 0,
-      "team": null,
-      "teamId": 8636,
-      "color": "#010E80",
-      "country": "ITA",
-      "count": 7,
-      "other": 1,
-      "appearances": 3,
-      "minutes": 0
-    },
-    {
-      "player": "PSV Eindhoven",
-      "playerId": 0,
-      "team": null,
-      "teamId": 8640,
-      "color": "#E00000",
-      "country": "NED",
-      "count": 7,
-      "other": 0,
-      "appearances": 3,
-      "minutes": 0
-    },
-    {
-      "player": "Villarreal",
-      "playerId": 0,
-      "team": null,
-      "teamId": 10205,
-      "color": "#e19d00",
-      "country": "ESP",
-      "count": 7,
-      "other": 0,
-      "appearances": 3,
-      "minutes": 0
     }
   ],
   "redTeams": [
+    {
+      "player": "Manchester United",
+      "playerId": 0,
+      "team": null,
+      "teamId": 10260,
+      "color": "#C70101",
+      "country": "ENG",
+      "count": 2,
+      "other": 8,
+      "appearances": 4,
+      "minutes": 0
+    },
     {
       "player": "Inter",
       "playerId": 0,
@@ -387,8 +417,8 @@
       "color": "#010E80",
       "country": "ITA",
       "count": 1,
-      "other": 7,
-      "appearances": 3,
+      "other": 9,
+      "appearances": 4,
       "minutes": 0
     },
     {
@@ -399,20 +429,32 @@
       "color": "#E01D13",
       "country": "FRA",
       "count": 1,
-      "other": 5,
-      "appearances": 3,
+      "other": 6,
+      "appearances": 4,
       "minutes": 0
     },
     {
-      "player": "Manchester United",
+      "player": "Bayern München",
       "playerId": 0,
       "team": null,
-      "teamId": 10260,
-      "color": "#C70101",
-      "country": "ENG",
+      "teamId": 9823,
+      "color": "#C60428",
+      "country": "GER",
       "count": 1,
-      "other": 5,
-      "appearances": 3,
+      "other": 4,
+      "appearances": 4,
+      "minutes": 0
+    },
+    {
+      "player": "Atlético Madrid",
+      "playerId": 0,
+      "team": null,
+      "teamId": 9906,
+      "color": "#C63527",
+      "country": "ESP",
+      "count": 1,
+      "other": 3,
+      "appearances": 4,
       "minutes": 0
     },
     {
@@ -428,30 +470,6 @@
       "minutes": 0
     },
     {
-      "player": "Atlético Madrid",
-      "playerId": 0,
-      "team": null,
-      "teamId": 9906,
-      "color": "#C63527",
-      "country": "ESP",
-      "count": 1,
-      "other": 2,
-      "appearances": 3,
-      "minutes": 0
-    },
-    {
-      "player": "Bayern München",
-      "playerId": 0,
-      "team": null,
-      "teamId": 9823,
-      "color": "#C60428",
-      "country": "GER",
-      "count": 1,
-      "other": 2,
-      "appearances": 3,
-      "minutes": 0
-    },
-    {
       "player": "Bodø/Glimt",
       "playerId": 0,
       "team": null,
@@ -460,7 +478,7 @@
       "country": "NOR",
       "count": 1,
       "other": 1,
-      "appearances": 3,
+      "appearances": 4,
       "minutes": 0
     }
   ]
