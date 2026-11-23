@@ -1,14 +1,14 @@
 {
   "season": "2026/2027",
   "seasonId": 47760,
-  "updatedAt": "2026-11-07 14:48",
+  "updatedAt": "2026-11-23 16:33",
   "updatePolicy": "每个比赛日前 2 天至后 2 天，每天 09:00 自动更新（北京时间）",
   "source": "FotMob (data.fotmob.com)",
   "topN": 10,
   "roundsCovered": 4,
   "yellowPlayers": [
     {
-      "player": "Hakan Çalhanoglu",
+      "player": "Hakan Çalhanoğlu",
       "playerId": 304733,
       "team": "Internazionale",
       "teamId": 8636,
@@ -80,7 +80,7 @@
       "minutes": 254
     },
     {
-      "player": "Alvaro Carreras",
+      "player": "Álvaro Carreras",
       "playerId": 1190025,
       "team": "Real Madrid",
       "teamId": 8633,
