@@ -1,11 +1,11 @@
 {
   "season": "2026/2027",
   "seasonId": 47760,
-  "updatedAt": "2026-11-24 18:40",
+  "updatedAt": "2026-11-25 17:29",
   "updatePolicy": "每个比赛日前 2 天至后 2 天，每天 09:00 自动更新（北京时间）",
   "source": "FotMob (data.fotmob.com)",
   "topN": 10,
-  "roundsCovered": 4,
+  "roundsCovered": 5,
   "yellowPlayers": [
     {
       "player": "Hakan Çalhanoğlu",
@@ -100,8 +100,8 @@
       "country": "ESP",
       "count": 2,
       "other": 0,
-      "appearances": 3,
-      "minutes": 188
+      "appearances": 4,
+      "minutes": 278
     },
     {
       "player": "Archie Brown",
@@ -124,8 +124,8 @@
       "country": "CUW",
       "count": 2,
       "other": 0,
-      "appearances": 4,
-      "minutes": 286
+      "appearances": 5,
+      "minutes": 376
     }
   ],
   "redPlayers": [
@@ -145,7 +145,7 @@
       "redReason": null,
       "redSecondYellow": false,
       "banMatchday": 5,
-      "banServed": false
+      "banServed": true
     },
     {
       "player": "Aboubakary Koïta",
@@ -163,7 +163,7 @@
       "redReason": "Abusive language",
       "redSecondYellow": false,
       "banMatchday": 5,
-      "banServed": false
+      "banServed": true
     },
     {
       "player": "Alessandro Bastoni",
@@ -235,7 +235,7 @@
       "redReason": "Foul",
       "redSecondYellow": true,
       "banMatchday": 5,
-      "banServed": false
+      "banServed": true
     },
     {
       "player": "Michael Olise",
@@ -300,8 +300,8 @@
       "country": "NOR",
       "count": 1,
       "other": 0,
-      "appearances": 3,
-      "minutes": 267,
+      "appearances": 4,
+      "minutes": 357,
       "redAtMatchday": 1,
       "redMinute": 87,
       "redReason": "Professional foul",
@@ -312,6 +312,18 @@
   ],
   "yellowTeams": [
     {
+      "player": "Real Betis",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8603,
+      "color": "#009048",
+      "country": "ESP",
+      "count": 13,
+      "other": 0,
+      "appearances": 5,
+      "minutes": 0
+    },
+    {
       "player": "Napoli",
       "playerId": 0,
       "team": null,
@@ -320,7 +332,7 @@
       "country": "ITA",
       "count": 12,
       "other": 1,
-      "appearances": 4,
+      "appearances": 5,
       "minutes": 0
     },
     {
@@ -336,15 +348,39 @@
       "minutes": 0
     },
     {
-      "player": "Real Betis",
+      "player": "Galatasaray",
       "playerId": 0,
       "team": null,
-      "teamId": 8603,
-      "color": "#009048",
-      "country": "ESP",
-      "count": 12,
+      "teamId": 8637,
+      "color": "#8D072A",
+      "country": "TUR",
+      "count": 11,
       "other": 0,
-      "appearances": 4,
+      "appearances": 5,
+      "minutes": 0
+    },
+    {
+      "player": "Lens",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8588,
+      "color": "#d89f00",
+      "country": "FRA",
+      "count": 11,
+      "other": 0,
+      "appearances": 5,
+      "minutes": 0
+    },
+    {
+      "player": "RB Leipzig",
+      "playerId": 0,
+      "team": null,
+      "teamId": 178475,
+      "color": "#DD0741",
+      "country": "GER",
+      "count": 11,
+      "other": 0,
+      "appearances": 5,
       "minutes": 0
     },
     {
@@ -372,6 +408,18 @@
       "minutes": 0
     },
     {
+      "player": "Aston Villa",
+      "playerId": 0,
+      "team": null,
+      "teamId": 10252,
+      "color": "#7D1142",
+      "country": "ENG",
+      "count": 10,
+      "other": 0,
+      "appearances": 5,
+      "minutes": 0
+    },
+    {
       "player": "Fenerbahçe",
       "playerId": 0,
       "team": null,
@@ -379,54 +427,6 @@
       "color": "#002D72",
       "country": "TUR",
       "count": 10,
-      "other": 0,
-      "appearances": 4,
-      "minutes": 0
-    },
-    {
-      "player": "Shakhtar Donetsk",
-      "playerId": 0,
-      "team": null,
-      "teamId": 9728,
-      "color": "#F0602B",
-      "country": "UKR",
-      "count": 10,
-      "other": 0,
-      "appearances": 4,
-      "minutes": 0
-    },
-    {
-      "player": "Inter",
-      "playerId": 0,
-      "team": null,
-      "teamId": 8636,
-      "color": "#010E80",
-      "country": "ITA",
-      "count": 9,
-      "other": 1,
-      "appearances": 4,
-      "minutes": 0
-    },
-    {
-      "player": "Galatasaray",
-      "playerId": 0,
-      "team": null,
-      "teamId": 8637,
-      "color": "#8D072A",
-      "country": "TUR",
-      "count": 9,
-      "other": 0,
-      "appearances": 4,
-      "minutes": 0
-    },
-    {
-      "player": "RB Leipzig",
-      "playerId": 0,
-      "team": null,
-      "teamId": 178475,
-      "color": "#DD0741",
-      "country": "GER",
-      "count": 9,
       "other": 0,
       "appearances": 4,
       "minutes": 0
@@ -454,7 +454,7 @@
       "country": "ITA",
       "count": 1,
       "other": 12,
-      "appearances": 4,
+      "appearances": 5,
       "minutes": 0
     },
     {
@@ -470,6 +470,18 @@
       "minutes": 0
     },
     {
+      "player": "AEK Athens",
+      "playerId": 0,
+      "team": null,
+      "teamId": 8563,
+      "color": "#d99f00",
+      "country": "GRE",
+      "count": 1,
+      "other": 9,
+      "appearances": 5,
+      "minutes": 0
+    },
+    {
       "player": "Inter",
       "playerId": 0,
       "team": null,
@@ -478,18 +490,6 @@
       "country": "ITA",
       "count": 1,
       "other": 9,
-      "appearances": 4,
-      "minutes": 0
-    },
-    {
-      "player": "AEK Athens",
-      "playerId": 0,
-      "team": null,
-      "teamId": 8563,
-      "color": "#d99f00",
-      "country": "GRE",
-      "count": 1,
-      "other": 6,
       "appearances": 4,
       "minutes": 0
     },
@@ -549,8 +549,8 @@
       "color": "#e09d00",
       "country": "NOR",
       "count": 1,
-      "other": 1,
-      "appearances": 4,
+      "other": 2,
+      "appearances": 5,
       "minutes": 0
     }
   ]
